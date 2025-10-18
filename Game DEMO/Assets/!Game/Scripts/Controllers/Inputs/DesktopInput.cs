@@ -1,0 +1,11 @@
+﻿using _Game.Scripts.Controllers.Interfaces;
+using UnityEngine;
+
+namespace _Game.Scripts.Controllers.Inputs
+{
+    public class DesktopInput : IInput
+    {
+        public float GetHorizontalAxis => Input.GetAxis("Horizontal");
+        public float GetVerticalAxis => Input.GetAxis("Vertical");
+    }
+}
