@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace _Game.Scripts.Player
 {
-    public class Player : MonoBehaviour
+    public class PlayerUnit : MonoBehaviour
     {
         #region FIELDS SERIALIZED
 

@@ -72,3 +72,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 Assets/PluginYourGames/Editor/SavesEditorYG2.json
 Assets/PluginYourGames/Editor/SavesEditorYG2.json
+
+node_modules
+package-lock.json
+npm-debug.log
+lib
+*.js
+
+Game DEMO/.idea/
