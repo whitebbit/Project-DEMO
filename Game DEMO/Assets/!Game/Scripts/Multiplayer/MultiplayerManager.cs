@@ -1,4 +1,6 @@
-﻿using _Game.Scripts.Player;
+﻿using System.Collections.Generic;
+using _Game.Scripts.Units.Enemy;
+using _Game.Scripts.Units.Player;
 using Colyseus;
 using UnityEngine;
 
@@ -8,8 +10,8 @@ namespace _Game.Scripts.Multiplayer
     {
         #region FIELDS SERIALIZED
 
-        [SerializeField] private PlayerUnit player;
-        [SerializeField] private Transform enemy;
+        [SerializeField] private PlayerUnit playerPrefab;
+        [SerializeField] private EnemyUnit enemyPrefab;
 
         #endregion
 
@@ -39,6 +41,11 @@ namespace _Game.Scripts.Multiplayer
 
         #region METHODS
 
+        public void SendMessage(string key, Dictionary<string, object> data)
+        {
+            _room.Send(key, data);
+        }
+
         private async void Connect()
         {
             _room = await Instance.client.JoinOrCreate<State>("state_handler");
@@ -49,20 +56,32 @@ namespace _Game.Scripts.Multiplayer
         {
             if (!isFirstState) return;
 
-            var serverPlayer = state.players[_room.SessionId];
-            var position = new Vector3(serverPlayer.x - 200, 0, serverPlayer.y - 200) / 8;
+            state.players.ForEach((key, player) =>
+            {
+                if (key == _room.SessionId) CreatePlayer(player);
+                else CreateEnemy(key, player);
+            });
 
-            var obj = Instantiate(player, position, Quaternion.identity);
-
-            state.players.ForEach(ForEachEnemy);
+            _room.State.players.OnAdd += CreateEnemy;
+            _room.State.players.OnRemove += RemoveEnemy;
         }
 
-        private void ForEachEnemy(string key, global::Player player)
+        private void CreatePlayer(Player player)
         {
-            if (key == _room.SessionId) return;
-            
-            var position = new Vector3(player.x - 200, 0, player.y - 200) / 8;
-            var obj = Instantiate(enemy, position, Quaternion.identity);
+            var position = new Vector3(player.x, 0, player.y);
+            Instantiate(playerPrefab, position, Quaternion.identity);
+        }
+
+        private void CreateEnemy(string key, Player player)
+        {
+            var position = new Vector3(player.x, 0, player.y);
+            var enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
+
+            player.OnChange += enemy.OnChange;
+        }
+
+        private void RemoveEnemy(string key, Player player)
+        {
         }
 
         #endregion

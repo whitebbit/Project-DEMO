@@ -1,15 +1,14 @@
-﻿using System;
-using _Game.Scripts.Controllers.Inputs;
+﻿using _Game.Scripts.Controllers.Inputs;
 using _Game.Scripts.Controllers.Interfaces;
 using UnityEngine;
 
-namespace _Game.Scripts.Player
+namespace _Game.Scripts.Units.Player
 {
     public class PlayerUnit : MonoBehaviour
     {
         #region FIELDS SERIALIZED
 
-        [SerializeField] private PlayerMovement movement;
+        [SerializeField] private UnitMovement movement;
 
         private IInput _input;
 
@@ -28,13 +27,13 @@ namespace _Game.Scripts.Player
 
         private void Update()
         {
-            movement.Move(_input.GetHorizontalAxis, _input.GetVerticalAxis);
+            movement.Move(new Vector3(_input.GetHorizontalAxis, 0,  _input.GetVerticalAxis));
         }
 
         #endregion
 
         #region METHODS
-
+        
         #endregion
     }
 }
