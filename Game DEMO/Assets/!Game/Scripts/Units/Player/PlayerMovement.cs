@@ -36,14 +36,24 @@ namespace _Game.Scripts.Units.Player
             SendMove();
         }
 
+        public override void GetMoveInfo(out Vector3 position, out Vector3 velocity)
+        {
+            position =  transform.position;
+            velocity =  _rigidbody.velocity;
+        }
+
         private void SendMove()
         {
-            var position = transform.position;
+            GetMoveInfo(out var position, out var velocity);
 
             var data = new Dictionary<string, object>
             {
-                { "x", position.x },
-                { "y", position.z },
+                { "pX", position.x },
+                { "pY", position.y },
+                { "pZ", position.z },
+                { "vX", velocity.x },
+                { "vY", velocity.y },
+                { "vZ", velocity.z },
             };
 
             MultiplayerManager.Instance.SendMessage("move", data);

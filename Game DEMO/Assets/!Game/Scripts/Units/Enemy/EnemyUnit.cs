@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Colyseus.Schema;
 using UnityEngine;
 
@@ -8,37 +10,72 @@ namespace _Game.Scripts.Units.Enemy
     {
         #region FIELDS SERIALIZED
 
-        [SerializeField] private UnitMovement movement;
+        [SerializeField] private EnemyMovement movement;
 
         #endregion
 
         #region FIELDS
 
+        private float AverageInterval => _receiveTimeIntervals.Sum() / _receiveTimeIntervals.Count;
+
+        private readonly List<float> _receiveTimeIntervals = new() { 0, 0, 0, 0, 0 };
+        private float _lastReceiveTime;
+
         #endregion
 
         #region UNITY FUNCTIONS
+
+        private void Update()
+        {
+            movement.Move(movement.TargetPosition);
+        }
 
         #endregion
 
         #region METHODS
 
+        private void SaveReceiveTime()
+        {
+            var interval = Time.time - _lastReceiveTime;
+            _lastReceiveTime = Time.time;
+
+            _receiveTimeIntervals.Add(interval);
+            _receiveTimeIntervals.RemoveAt(0);
+        }
+
         public void OnChange(List<DataChange> changes)
         {
-            var position = transform.position;
+            SaveReceiveTime();
+
+            var position = movement.TargetPosition;
+            var velocity = Vector3.zero;
+
             foreach (var change in changes)
             {
                 switch (change.Field)
                 {
-                    case "x":
+                    case "pX":
                         position.x = (float)change.Value;
                         break;
-                    case "y":
+                    case "pY":
+                        position.y = (float)change.Value;
+                        break;
+                    case "pZ":
                         position.z = (float)change.Value;
+                        break;
+                    case "vX":
+                        velocity.x = (float)change.Value;
+                        break;
+                    case "vY":
+                        velocity.y = (float)change.Value;
+                        break;
+                    case "vZ":
+                        velocity.z = (float)change.Value;
                         break;
                 }
             }
 
-            movement.Move(position);
+            movement.SetMove(position, velocity, AverageInterval);
         }
 
         #endregion
