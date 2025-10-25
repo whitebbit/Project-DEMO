@@ -25,7 +25,7 @@ namespace _Game.Scripts.Units.Player
             _input = new DesktopInput();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             movement.Move(new Vector3(_input.GetHorizontalAxis, 0,  _input.GetVerticalAxis));
         }

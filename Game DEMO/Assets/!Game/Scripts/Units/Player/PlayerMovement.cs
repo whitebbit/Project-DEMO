@@ -12,25 +12,27 @@ namespace _Game.Scripts.Units.Player
         #endregion
 
         #region FIELDS
-        
-        private CharacterController _controller;
+
+        private Rigidbody _rigidbody;
 
         #endregion
 
         #region UNITY FUNCTIONS
-        
+
         private void Awake()
         {
-            _controller = GetComponent<CharacterController>();
+            _rigidbody = GetComponent<Rigidbody>();
         }
 
         #endregion
 
         #region METHODS
 
-        public override void Move(Vector3 position)
+        public override void Move(Vector3 input)
         {
-            _controller.Move(position * (Speed * Time.deltaTime));
+            var velocity = (transform.forward * input.z + transform.right * input.x).normalized;
+            _rigidbody.velocity = velocity * Speed;
+            
             SendMove();
         }
 
