@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5643395744002010801}
   - component: {fileID: 4688092829850788519}
   - component: {fileID: 121082612540568298}
+  - component: {fileID: 3003632642062767036}
   - component: {fileID: 4529970774049692060}
   - component: {fileID: 6472385126405522927}
   - component: {fileID: 3088412778356068091}
@@ -50,8 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d0c9d4605449858e41a6e2dcade18c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 121082612540568298}
   controller: {fileID: 4688092829850788519}
+  movement: {fileID: 121082612540568298}
 --- !u!114 &4688092829850788519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,6 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 121082612540568298}
+  look: {fileID: 3003632642062767036}
 --- !u!114 &121082612540568298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,6 +79,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d924e1d994914db09012a46dfe622ec0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3003632642062767036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8869026343386379708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab01c9a46a8a4d63b0c19b4a1bcbe897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootX: {fileID: 3943383358803621322}
 --- !u!114 &4529970774049692060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,6 +313,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &3943383358803621322 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7876023681238672744, guid: 2fa7fdb5c35a8af4ba61474a3c081a96, type: 3}
+  m_PrefabInstance: {fileID: 6626193126940119202}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6664851324655105865 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2fa7fdb5c35a8af4ba61474a3c081a96, type: 3}

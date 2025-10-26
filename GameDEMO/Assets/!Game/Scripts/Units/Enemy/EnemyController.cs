@@ -10,6 +10,7 @@ namespace _Game.Scripts.Units.Enemy
         #region FIELDS SERIALIZED
 
         [SerializeField] private EnemyMovement movement;
+        [SerializeField] private EnemyLook look;
 
         #endregion
 
@@ -41,13 +42,13 @@ namespace _Game.Scripts.Units.Enemy
             _receiveTimeIntervals.Add(interval);
             _receiveTimeIntervals.RemoveAt(0);
         }
-        
+
         public void OnChange(List<DataChange> changes)
         {
             SaveReceiveTime();
 
             var position = movement.TargetPosition;
-            var velocity = Vector3.zero;
+            var velocity = movement.Velocity;
 
             foreach (var change in changes)
             {
@@ -71,12 +72,18 @@ namespace _Game.Scripts.Units.Enemy
                     case "vZ":
                         velocity.z = (float)change.Value;
                         break;
+                    case "rX":
+                        look.SetRotateX((float)change.Value);
+                        break;
+                    case "rY":
+                        look.SetRotateY((float)change.Value);
+                        break;
                 }
             }
 
             movement.SetMovement(position, velocity, AverageInterval);
         }
-        
+
         #endregion
     }
 }

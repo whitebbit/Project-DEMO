@@ -11,7 +11,8 @@ namespace _Game.Scripts.Units.Player
 
         [SerializeField] private UnitMovement movement;
         [SerializeField] private CameraLook cameraLook;
-
+        [SerializeField] private PlayerStateTransmitter stateTransmitter;
+        
         private IInput _input;
 
         #endregion
@@ -39,6 +40,8 @@ namespace _Game.Scripts.Units.Player
 
             if (_input.GetJumpKeyDown)
                 movement.Jump();
+            
+            stateTransmitter.SendTransform();
         }
 
         #endregion

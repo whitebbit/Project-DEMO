@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 1131470597414116816}
   - component: {fileID: 4343760790549400292}
   - component: {fileID: 66087921146255264}
+  - component: {fileID: 5419897986745743020}
   - component: {fileID: 6109827184363965549}
   - component: {fileID: 670017908092820437}
   - component: {fileID: 5955012591436551612}
@@ -97,6 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 1131470597414116816}
   cameraLook: {fileID: 66087921146255264}
+  stateTransmitter: {fileID: 5419897986745743020}
 --- !u!114 &1131470597414116816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +146,20 @@ MonoBehaviour:
   clampAngles: {x: -90, y: 90}
   rootX: {fileID: 5518848167778260291}
   cameraPoint: {fileID: 8526626939265570863}
+--- !u!114 &5419897986745743020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8869026343386379708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 487964a88daf424caaffa4b1ac303b5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 1131470597414116816}
+  cameraLook: {fileID: 66087921146255264}
 --- !u!114 &6109827184363965549
 MonoBehaviour:
   m_ObjectHideFlags: 0

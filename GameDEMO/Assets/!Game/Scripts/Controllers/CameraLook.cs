@@ -68,6 +68,11 @@ namespace _Game.Scripts.Controllers
             _rotateY = 0;
         }
 
+        public void GetRotateInfo(out Vector2 rotation)
+        {
+            rotation = new Vector2(rootX.localEulerAngles.x, transform.eulerAngles.y);
+        }
+
         #endregion
     }
 }

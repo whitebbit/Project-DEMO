@@ -15,7 +15,7 @@ namespace _Game.Scripts.Units.Player
         [SerializeField] private float jumpDelay = 0.2f;
 
         [SerializeField] private GroundChecker groundChecker;
-
+        
         #endregion
 
         #region FIELDS
@@ -47,8 +47,6 @@ namespace _Game.Scripts.Units.Player
         {
             Velocity = GetVelocity(input);
             _rigidbody.velocity = Velocity;
-
-            SendMove();
         }
 
         private Vector3 GetVelocity(Vector3 input)
@@ -78,23 +76,7 @@ namespace _Game.Scripts.Units.Player
             velocity = _rigidbody.velocity;
         }
 
-        private void SendMove()
-        {
-            GetMoveInfo(out var position, out var velocity);
-
-            var data = new Dictionary<string, object>
-            {
-                { "pX", position.x },
-                { "pY", position.y },
-                { "pZ", position.z },
-                { "vX", velocity.x },
-                { "vY", velocity.y },
-                { "vZ", velocity.z },
-            };
-
-            MultiplayerManager.Instance.SendMessage("move", data);
-        }
-
+        
         #endregion
     }
 }
