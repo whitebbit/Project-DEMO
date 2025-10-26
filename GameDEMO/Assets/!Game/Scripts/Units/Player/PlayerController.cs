@@ -1,4 +1,5 @@
-﻿using _Game.Scripts.Controllers;
+﻿using System;
+using _Game.Scripts.Controllers;
 using _Game.Scripts.Controllers.Inputs;
 using _Game.Scripts.Controllers.Interfaces;
 using UnityEngine;
@@ -9,10 +10,11 @@ namespace _Game.Scripts.Units.Player
     {
         #region FIELDS SERIALIZED
 
+        [SerializeField] private UnitInventory inventory;
         [SerializeField] private UnitMovement movement;
         [SerializeField] private CameraLook cameraLook;
         [SerializeField] private PlayerStateTransmitter stateTransmitter;
-        
+
         private IInput _input;
 
         #endregion
@@ -28,6 +30,12 @@ namespace _Game.Scripts.Units.Player
             _input = new DesktopInput();
         }
 
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         private void FixedUpdate()
         {
             movement.Move(new Vector3(_input.GetHorizontalAxis, 0, _input.GetVerticalAxis));
@@ -40,7 +48,10 @@ namespace _Game.Scripts.Units.Player
 
             if (_input.GetJumpKeyDown)
                 movement.Jump();
-            
+
+            if (_input.GetShootKeyDown)
+                inventory.EquippedWeapon.Shoot();
+
             stateTransmitter.SendTransform();
         }
 

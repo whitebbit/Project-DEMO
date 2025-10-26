@@ -12,5 +12,7 @@ namespace _Game.Scripts.Controllers.Inputs
         public float GetMouseYAxis => Input.GetAxis("Mouse Y");
 
         public bool GetJumpKeyDown => Input.GetKeyDown(KeyCode.Space);
+        
+        public bool GetShootKeyDown => Input.GetMouseButton(0);
     }
 }

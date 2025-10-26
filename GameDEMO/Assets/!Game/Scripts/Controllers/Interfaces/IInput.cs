@@ -9,5 +9,6 @@ namespace _Game.Scripts.Controllers.Interfaces
         public float GetMouseYAxis { get; }
 
         public bool GetJumpKeyDown { get; }
+        public bool GetShootKeyDown { get; }
     }
 }
