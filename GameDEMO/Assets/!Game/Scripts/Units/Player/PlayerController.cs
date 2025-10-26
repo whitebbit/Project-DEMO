@@ -2,6 +2,7 @@
 using _Game.Scripts.Controllers;
 using _Game.Scripts.Controllers.Inputs;
 using _Game.Scripts.Controllers.Interfaces;
+using _Game.Scripts.Weapons;
 using UnityEngine;
 
 namespace _Game.Scripts.Units.Player
@@ -49,8 +50,8 @@ namespace _Game.Scripts.Units.Player
             if (_input.GetJumpKeyDown)
                 movement.Jump();
 
-            if (_input.GetShootKeyDown)
-                inventory.EquippedWeapon.Shoot();
+            if (_input.GetShootKeyDown && inventory.EquippedWeapon.TryShoot(out var info))
+                stateTransmitter.SendShoot(ref info);
 
             stateTransmitter.SendTransform();
         }

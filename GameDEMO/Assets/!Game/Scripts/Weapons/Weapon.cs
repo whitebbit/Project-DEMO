@@ -1,4 +1,5 @@
-﻿using _Game.Scripts.Weapons.Projectiles;
+﻿using System;
+using _Game.Scripts.Weapons.Projectiles;
 using UnityEngine;
 
 namespace _Game.Scripts.Weapons
@@ -15,13 +16,13 @@ namespace _Game.Scripts.Weapons
         [SerializeField] private Animator animator;
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private Transform muzzlePoint;
-        
+
         #endregion
 
         #region FIELDS
 
         private float _lastShotTime;
-        
+
         #endregion
 
         #region UNITY FUNCTIONS
@@ -30,20 +31,56 @@ namespace _Game.Scripts.Weapons
 
         #region METHODS
 
-        public void Shoot()
+        public bool TryShoot(out ShootInfo info)
         {
-            if(Time.time - _lastShotTime < shootDelay) return;
-            
-            var bullet = Instantiate(bulletPrefab, muzzlePoint.position, muzzlePoint.rotation);
-            bullet.Initialize(muzzlePoint.forward, bulletSpeed);
-            
-            animator.SetTrigger(ShootHash);
-            
-            _lastShotTime = Time.time;
-        }
-        
-        #endregion
+            info = new ShootInfo(); 
 
-        
+            if (Time.time - _lastShotTime < shootDelay) return false;
+
+            var position = muzzlePoint.position;
+            var direction = muzzlePoint.forward;
+            
+            var bullet = Instantiate(bulletPrefab, position, muzzlePoint.rotation);
+            bullet.Initialize(direction, bulletSpeed);
+
+            animator.SetTrigger(ShootHash);
+
+            _lastShotTime = Time.time;
+
+            info = InitShootInfo(info, direction, position);
+
+            return true;
+        }
+
+        private ShootInfo InitShootInfo(ShootInfo info, Vector3 direction, Vector3 position)
+        {
+            direction *= bulletSpeed;
+
+            info.pX = position.x;
+            info.pY = position.y;
+            info.pZ = position.z;
+            
+            info.dX = direction.x;
+            info.dY = direction.y;
+            info.dZ = direction.z;
+            
+            return info;
+        }
+
+        #endregion
+    }
+
+    [Serializable]
+    public struct ShootInfo
+    {
+        public string key;
+
+        public float dX;
+        public float dY;
+        public float dZ;
+
+        public float pX;
+        public float pY;
+        public float pZ;
     }
 }

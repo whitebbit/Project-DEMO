@@ -47,6 +47,13 @@ namespace _Game.Scripts.Multiplayer
             _room.Send(key, data);
         }
 
+        public void SendMessage(string key, string data)
+        {
+            _room.Send(key, data);
+        }
+
+        public string GetSessionID() => _room.SessionId;
+        
         private async void Connect()
         {
             var data = new Dictionary<string, object>
