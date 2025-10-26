@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using _Game.Scripts.Weapons;
 using Colyseus.Schema;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace _Game.Scripts.Units.Enemy
     {
         #region FIELDS SERIALIZED
 
+        [SerializeField] private UnitInventory inventory;
         [SerializeField] private EnemyMovement movement;
         [SerializeField] private EnemyLook look;
 
@@ -33,6 +35,11 @@ namespace _Game.Scripts.Units.Enemy
         #endregion
 
         #region METHODS
+
+        public void Shoot(in ShootInfo info)
+        {
+            inventory.EquippedWeapon.ShootByInfo(info);
+        }
 
         private void SaveReceiveTime()
         {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Game.Scripts.Weapons.Projectiles
 {
@@ -20,10 +21,15 @@ namespace _Game.Scripts.Weapons.Projectiles
 
         #region METHODS
 
-        public void Initialize(Vector3 direction, float speed)
+        public void Initialize(Vector3 velocity)
         {
-            rigidbody.velocity = direction * speed;
+            rigidbody.velocity = velocity;
             Destroy(gameObject, 2.5f);
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            Destroy(gameObject);
         }
 
         #endregion

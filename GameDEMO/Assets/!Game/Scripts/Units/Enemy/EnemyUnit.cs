@@ -17,6 +17,7 @@ namespace _Game.Scripts.Units.Enemy
 
         #region FIELDS
 
+        public EnemyController Controller => controller;
         private global::Player _player;
         
         #endregion

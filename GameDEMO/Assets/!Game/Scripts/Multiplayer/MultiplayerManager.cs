@@ -2,6 +2,7 @@
 using _Game.Scripts.Units;
 using _Game.Scripts.Units.Enemy;
 using _Game.Scripts.Units.Player;
+using _Game.Scripts.Weapons;
 using Colyseus;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ namespace _Game.Scripts.Multiplayer
         #region FIELDS
 
         private ColyseusRoom<State> _room;
+        private Dictionary<string, EnemyUnit> _enemies = new();
 
         #endregion
 
@@ -53,7 +55,7 @@ namespace _Game.Scripts.Multiplayer
         }
 
         public string GetSessionID() => _room.SessionId;
-        
+
         private async void Connect()
         {
             var data = new Dictionary<string, object>
@@ -63,6 +65,7 @@ namespace _Game.Scripts.Multiplayer
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
             _room.OnStateChange += OnStateChange;
+            _room.OnMessage<string>("Shoot", ApplyShoot);
         }
 
         private void OnStateChange(State state, bool isFirstState)
@@ -89,12 +92,27 @@ namespace _Game.Scripts.Multiplayer
         {
             var position = new Vector3(player.pX, player.pY, player.pZ);
             var enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
-            
+
             enemy.Initialize(player);
+
+            _enemies.Add(key, enemy);
         }
 
         private void RemoveEnemy(string key, Player player)
         {
+            if (!_enemies.TryGetValue(key, out var enemy)) return;
+            
+            enemy.Destroy();
+            _enemies.Remove(key);
+        }
+
+        private void ApplyShoot(string jsonShootInfo)
+        {
+            var info = JsonUtility.FromJson<ShootInfo>(jsonShootInfo);
+            
+            if (!_enemies.TryGetValue(info.key, out var enemy)) return;
+            
+            enemy.Controller.Shoot(info);
         }
 
         #endregion
