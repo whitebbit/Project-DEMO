@@ -75,7 +75,7 @@ namespace _Game.Scripts.Units.Enemy
                 }
             }
 
-            movement.SetMove(position, velocity, AverageInterval);
+            movement.SetMovement(position, velocity, AverageInterval);
         }
 
         #endregion

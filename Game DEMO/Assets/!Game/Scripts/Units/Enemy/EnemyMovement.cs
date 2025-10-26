@@ -30,16 +30,15 @@ namespace _Game.Scripts.Units.Enemy
         public override void Move(Vector3 position)
         {
             var maxDistance = Time.deltaTime * _velocityMagnitude;
-            transform.position = maxDistance > 0.1f
+            transform.position = _velocityMagnitude > 0.1f
                 ? Vector3.MoveTowards(transform.position, position, maxDistance)
-                : position;
+                : Vector3.Lerp(transform.position, position, 20 * Time.deltaTime);
         }
 
-        public override void SetMove(in Vector3 position, in Vector3 velocity, in float averageInterval)
+        public override void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval)
         {
             TargetPosition = position + velocity * averageInterval;
             _velocityMagnitude = velocity.magnitude;
-            Debug.Log($"{TargetPosition} - {position} - {velocity} - {averageInterval}");
         }
 
         public override void GetMoveInfo(out Vector3 position, out Vector3 velocity)

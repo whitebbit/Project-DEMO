@@ -8,6 +8,8 @@ namespace _Game.Scripts.Units.Player
     public class PlayerMovement : UnitMovement
     {
         #region FIELDS SERIALIZED
+        
+        [SerializeField] private float speed = 5;
 
         #endregion
 
@@ -31,7 +33,7 @@ namespace _Game.Scripts.Units.Player
         public override void Move(Vector3 input)
         {
             var velocity = (transform.forward * input.z + transform.right * input.x).normalized;
-            _rigidbody.velocity = velocity * Speed;
+            _rigidbody.velocity = velocity * speed;
             
             SendMove();
         }

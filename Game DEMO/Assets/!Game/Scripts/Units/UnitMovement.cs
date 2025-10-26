@@ -8,15 +8,11 @@ namespace _Game.Scripts.Units
     public abstract class UnitMovement : MonoBehaviour, IMovement
     {
         #region FIELDS SERIALIZED
-
-        [SerializeField] private float speed = 5;
-
+        
         #endregion
 
         #region FIELDS
         
-        public float Speed => speed;
-
         #endregion
 
         #region UNITY FUNCTIONS
@@ -28,7 +24,7 @@ namespace _Game.Scripts.Units
         public abstract void Move(Vector3 position);
         public abstract void GetMoveInfo(out Vector3 position, out Vector3 velocity);
         
-        public virtual void SetMove(in Vector3 position, in Vector3 velocity, in float averageInterval)
+        public virtual void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval)
         {
         }
 
