@@ -24,6 +24,10 @@ namespace _Game.Scripts.Units
         public abstract void Move(Vector3 position);
         public abstract void GetMoveInfo(out Vector3 position, out Vector3 velocity);
         
+        public virtual void Jump()
+        {
+        }
+
         public virtual void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval)
         {
         }
