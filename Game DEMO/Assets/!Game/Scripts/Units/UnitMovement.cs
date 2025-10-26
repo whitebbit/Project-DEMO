@@ -8,22 +8,25 @@ namespace _Game.Scripts.Units
     public abstract class UnitMovement : MonoBehaviour, IMovement
     {
         #region FIELDS SERIALIZED
-        
+
         #endregion
 
         #region FIELDS
-        
+
+        public abstract float Speed { get; protected set; }
+        public  abstract Vector3 Velocity { get; protected set; }
+
         #endregion
 
         #region UNITY FUNCTIONS
-        
+
         #endregion
 
         #region METHODS
 
         public abstract void Move(Vector3 position);
         public abstract void GetMoveInfo(out Vector3 position, out Vector3 velocity);
-        
+
         public virtual void Jump()
         {
         }

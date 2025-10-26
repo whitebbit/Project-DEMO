@@ -27,6 +27,9 @@ namespace _Game.Scripts.Units.Enemy
 
         #region METHODS
 
+        public override float Speed { get; protected set; }
+        public override Vector3 Velocity { get; protected set; }
+
         public override void Move(Vector3 position)
         {
             var maxDistance = Time.deltaTime * _velocityMagnitude;

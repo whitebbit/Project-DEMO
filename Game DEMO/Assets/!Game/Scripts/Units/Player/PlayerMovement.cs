@@ -12,13 +12,23 @@ namespace _Game.Scripts.Units.Player
 
         [SerializeField] private float speed = 5;
         [SerializeField] private float jumpForce = 5;
+        [SerializeField] private float jumpDelay = 0.2f;
+
         [SerializeField] private GroundChecker groundChecker;
-        
+
         #endregion
 
         #region FIELDS
 
+        public override float Speed
+        {
+            get => speed;
+            protected set => speed = value;
+        }
+        public override  Vector3 Velocity { get; protected set; }
+
         private Rigidbody _rigidbody;
+        private float _jumpTime;
 
         #endregion
 
@@ -35,7 +45,8 @@ namespace _Game.Scripts.Units.Player
 
         public override void Move(Vector3 input)
         {
-            _rigidbody.velocity = GetVelocity(input);;
+            Velocity = GetVelocity(input);
+            _rigidbody.velocity = Velocity;
 
             SendMove();
         }
@@ -44,17 +55,20 @@ namespace _Game.Scripts.Units.Player
         {
             var vY = _rigidbody.velocity.y;
             var horizontal = (transform.forward * input.z + transform.right * input.x).normalized * speed;
-            
+
             if (float.IsNaN(vY) || float.IsInfinity(vY))
                 vY = 0f;
-            
-            return new Vector3(horizontal.x, vY, horizontal.z);;
+
+            return new Vector3(horizontal.x, vY, horizontal.z);
         }
 
         public override void Jump()
         {
             if (!groundChecker.IsGrounded) return;
 
+            if (Time.time - _jumpTime < jumpDelay) return;
+
+            _jumpTime = Time.time;
             _rigidbody.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
         }
 
