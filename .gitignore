@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-Game DEMO/[Ll]ibrary/
-Game DEMO/[Tt]emp/
-Game DEMO/[Oo]bj/
-Game DEMO/[Bb]uild/
-Game DEMO/[Bb]uilds/
-Game DEMO/[Ll]ogs/
-Game DEMO/[Uu]ser[Ss]ettings/
+GameDEMO/[Ll]ibrary/
+GameDEMO/[Tt]emp/
+GameDEMO/[Oo]bj/
+GameDEMO/[Bb]uild/
+GameDEMO/[Bb]uilds/
+GameDEMO/[Ll]ogs/
+GameDEMO/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -79,4 +79,4 @@ npm-debug.log
 lib
 *.js
 
-Game DEMO/.idea/
+GameDEMO/.idea/
