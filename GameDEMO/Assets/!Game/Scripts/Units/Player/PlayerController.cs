@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using _Game.Scripts.Controllers;
 using _Game.Scripts.Controllers.Inputs;
 using _Game.Scripts.Controllers.Interfaces;
 using _Game.Scripts.Weapons;
+using Colyseus.Schema;
 using UnityEngine;
 
 namespace _Game.Scripts.Units.Player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : UnitController
     {
         #region FIELDS SERIALIZED
 
+        [SerializeField] private Unit unit;
         [SerializeField] private UnitInventory inventory;
         [SerializeField] private UnitMovement movement;
         [SerializeField] private CameraLook cameraLook;
@@ -42,23 +45,41 @@ namespace _Game.Scripts.Units.Player
             movement.Move(new Vector3(_input.GetHorizontalAxis, 0, _input.GetVerticalAxis));
         }
 
-        private void Update()
+        protected override void Update()
         {
-            cameraLook.RotateX(-_input.GetMouseYAxis);
-            cameraLook.RotateY(_input.GetMouseXAxis);
-
-            if (_input.GetJumpKeyDown)
-                movement.Jump();
-
+            base.Update();
+            
             if (_input.GetShootKeyDown && inventory.EquippedWeapon.TryShoot(out var info))
                 stateTransmitter.SendShoot(ref info);
-
+            
             stateTransmitter.SendTransform();
         }
 
         #endregion
 
         #region METHODS
+        
+        protected override void HandleMovement()
+        {
+            cameraLook.RotateX(-_input.GetMouseYAxis);
+            cameraLook.RotateY(_input.GetMouseXAxis);
+
+            if (_input.GetJumpKeyDown)
+                movement.Jump();
+        }
+
+        public override void OnChange(List<DataChange> changes)
+        {
+            foreach (var change in changes)
+            {
+                unit.UnitHealth.HealthPoints = change.Field switch
+                {
+                    "currentHP" => Convert.ToSByte(change.Value),
+                    _ => unit.UnitHealth.HealthPoints
+                };
+                
+            }
+        }
 
         #endregion
     }

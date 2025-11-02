@@ -86,7 +86,9 @@ namespace _Game.Scripts.Multiplayer
         private void CreatePlayer(Player player)
         {
             var position = new Vector3(player.pX, player.pY, player.pZ);
-            Instantiate(playerPrefab, position, Quaternion.identity);
+            var unit = Instantiate(playerPrefab, position, Quaternion.identity);
+
+            unit.Initialize("", player);
         }
 
         private void CreateEnemy(string key, Player player)
@@ -94,7 +96,7 @@ namespace _Game.Scripts.Multiplayer
             var position = new Vector3(player.pX, player.pY, player.pZ);
             var enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
 
-            enemy.Initialize(player);
+            enemy.Initialize(key, player);
 
             _enemies.Add(key, enemy);
         }

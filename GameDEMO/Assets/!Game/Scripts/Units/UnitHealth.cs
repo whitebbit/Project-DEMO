@@ -14,8 +14,6 @@ namespace _Game.Scripts.Units
                 _currentHealth = Math.Clamp(value, 0, MaxHealth);
 
                 OnHealthChanged?.Invoke(_currentHealth, MaxHealth);
-               
-                
                 if (_currentHealth <= 0)
                     OnDying?.Invoke();
             }

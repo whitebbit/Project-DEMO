@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace _Game.Scripts.Units.Enemy
 {
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : UnitController
     {
         #region FIELDS SERIALIZED
 
@@ -18,8 +18,7 @@ namespace _Game.Scripts.Units.Enemy
 
         #region FIELDS
 
-        public float AverageInterval => _receiveTimeIntervals.Sum() / _receiveTimeIntervals.Count;
-
+        private float AverageInterval => _receiveTimeIntervals.Sum() / _receiveTimeIntervals.Count;
         private readonly List<float> _receiveTimeIntervals = new() { 0, 0, 0, 0, 0 };
         private float _lastReceiveTime;
 
@@ -27,16 +26,11 @@ namespace _Game.Scripts.Units.Enemy
 
         #region UNITY FUNCTIONS
 
-        private void Update()
-        {
-            movement.Move(movement.TargetPosition);
-        }
-
         #endregion
 
         #region METHODS
 
-        public void Shoot(in ShootInfo info)
+        public override void Shoot(in ShootInfo info)
         {
             inventory.EquippedWeapon.ShootByInfo(info);
         }
@@ -50,7 +44,12 @@ namespace _Game.Scripts.Units.Enemy
             _receiveTimeIntervals.RemoveAt(0);
         }
 
-        public void OnChange(List<DataChange> changes)
+        protected override void HandleMovement()
+        {
+            movement.Move(movement.TargetPosition);
+        }
+
+        public override void OnChange(List<DataChange> changes)
         {
             SaveReceiveTime();
 

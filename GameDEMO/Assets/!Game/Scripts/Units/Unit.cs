@@ -27,7 +27,10 @@ namespace _Game.Scripts.Units
 
         #region METHODS
 
-        public abstract void Initialize(global::Player player);
+        public virtual void Initialize(string id, global::Player player)
+        {
+            
+        }
 
         public virtual void Destroy()
         {
@@ -36,7 +39,7 @@ namespace _Game.Scripts.Units
 
         #endregion
 
-        public void ApplyDamage(int damage)
+        public virtual void ApplyDamage(int damage)
         {
             UnitHealth.HealthPoints -= damage;
         }
