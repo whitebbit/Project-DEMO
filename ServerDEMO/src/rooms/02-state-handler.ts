@@ -28,6 +28,9 @@ export class Player extends Schema {
 
     @type("number")
     speed = 0;
+
+    @type("int8")
+    hp = 0;
 }
 
 export class State extends Schema {
@@ -38,7 +41,10 @@ export class State extends Schema {
 
     createPlayer(sessionId: string, data: any) {
         const player = new Player();
+
+        player.hp = data.hp;
         player.speed = data.speed;
+        console.log("StateHandlerRoom created!", player.hp);
         this.players.set(sessionId, player);
     }
 

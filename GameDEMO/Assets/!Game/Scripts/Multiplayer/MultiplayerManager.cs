@@ -60,7 +60,8 @@ namespace _Game.Scripts.Multiplayer
         {
             var data = new Dictionary<string, object>
             {
-                { "speed", playerPrefab.GetComponent<UnitMovement>().Speed },
+                { "speed", playerPrefab.Config.Movement.Speed },
+                { "hp", playerPrefab.Config.Health.MaxHealth },
             };
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
@@ -101,7 +102,7 @@ namespace _Game.Scripts.Multiplayer
         private void RemoveEnemy(string key, Player player)
         {
             if (!_enemies.TryGetValue(key, out var enemy)) return;
-            
+
             enemy.Destroy();
             _enemies.Remove(key);
         }
@@ -109,9 +110,9 @@ namespace _Game.Scripts.Multiplayer
         private void ApplyShoot(string jsonShootInfo)
         {
             var info = JsonUtility.FromJson<ShootInfo>(jsonShootInfo);
-            
+
             if (!_enemies.TryGetValue(info.key, out var enemy)) return;
-            
+
             enemy.Controller.Shoot(info);
         }
 

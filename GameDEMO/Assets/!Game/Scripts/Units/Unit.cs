@@ -1,15 +1,23 @@
-﻿using UnityEngine;
+﻿using System;
+using _Game.Scripts.Units.Interfaces;
+using _Game.Scripts.Units.Scriptables;
+using UnityEngine;
 
 namespace _Game.Scripts.Units
 {
-    public abstract class Unit : MonoBehaviour
+    public abstract class Unit : MonoBehaviour, IDamageable
     {
-
         #region FIELDS SERIALIZED
+
+        [SerializeField] private UnitConfig config;
 
         #endregion
 
         #region FIELDS
+
+        protected UnitHealth Health;
+        public UnitHealth UnitHealth => Health ??= new UnitHealth(config.Health.MaxHealth);
+        public UnitConfig Config => config;
 
         #endregion
 
@@ -25,9 +33,12 @@ namespace _Game.Scripts.Units
         {
             Destroy(gameObject);
         }
-        
+
         #endregion
 
-        
+        public void ApplyDamage(int damage)
+        {
+            UnitHealth.HealthPoints -= damage;
+        }
     }
 }

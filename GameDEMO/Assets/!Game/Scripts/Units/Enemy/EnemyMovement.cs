@@ -11,9 +11,13 @@ namespace _Game.Scripts.Units.Enemy
 
         #region FIELDS
 
+        public override float Speed => _speed;
+        public override Vector3 Velocity { get; protected set; }
         public Vector3 TargetPosition { get; private set; } = Vector3.zero;
+        
         private float _velocityMagnitude;
-
+        private float _speed;
+        
         #endregion
 
         #region UNITY FUNCTIONS
@@ -27,10 +31,7 @@ namespace _Game.Scripts.Units.Enemy
 
         #region METHODS
 
-        public override float Speed { get; protected set; }
-        public override Vector3 Velocity { get; protected set; }
-
-        public void SetSpeed(float value) => Speed = value;
+        public void SetSpeed(float value) => _speed = value;
 
         public override void Move(Vector3 position)
         {

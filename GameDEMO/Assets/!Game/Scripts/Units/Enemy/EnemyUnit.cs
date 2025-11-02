@@ -19,7 +19,7 @@ namespace _Game.Scripts.Units.Enemy
 
         public EnemyController Controller => controller;
         private global::Player _player;
-        
+
         #endregion
 
         #region UNITY FUNCTIONS
@@ -27,12 +27,14 @@ namespace _Game.Scripts.Units.Enemy
         #endregion
 
         #region METHODS
-        
+
         public override void Initialize(global::Player player)
         {
             _player = player;
-            
+
+            Health = new UnitHealth(player.hp);
             movement.SetSpeed(_player.speed);
+            
             _player.OnChange += controller.OnChange;
         }
 
@@ -43,6 +45,5 @@ namespace _Game.Scripts.Units.Enemy
         }
 
         #endregion
-        
     }
 }

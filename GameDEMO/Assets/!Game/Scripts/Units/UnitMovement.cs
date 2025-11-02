@@ -9,12 +9,14 @@ namespace _Game.Scripts.Units
     {
         #region FIELDS SERIALIZED
 
+        [SerializeField] protected Unit unit;
+
         #endregion
 
         #region FIELDS
 
-        public abstract float Speed { get; protected set; }
-        public  abstract Vector3 Velocity { get; protected set; }
+        public abstract float Speed { get;  }
+        public abstract Vector3 Velocity { get; protected set; }
 
         #endregion
 

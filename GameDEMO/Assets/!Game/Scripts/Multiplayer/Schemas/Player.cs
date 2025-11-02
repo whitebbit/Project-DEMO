@@ -34,5 +34,8 @@ public partial class Player : Schema {
 
 	[Type(8, "number")]
 	public float speed = default(float);
+
+	[Type(9, "int8")]
+	public sbyte hp = default(sbyte);
 }
 

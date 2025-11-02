@@ -7,6 +7,7 @@ namespace _Game.Scripts.Weapons
 
         #region FIELDS SERIALIZED
 
+        [SerializeField] private int damage;
         [SerializeField] private float bulletSpeed;
         [SerializeField] private float shootDelay;
         [SerializeField] private Transform muzzlePoint;
@@ -36,7 +37,7 @@ namespace _Game.Scripts.Weapons
             var velocity = muzzlePoint.forward * bulletSpeed;
 
             var bullet = Instantiate(bulletPrefab, position, muzzlePoint.rotation);
-            bullet.Initialize(velocity);
+            bullet.Initialize(velocity, damage);
 
             animator.SetTrigger(ShootHash);
 
