@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Game.Scripts.UI;
 using _Game.Scripts.Units;
 using _Game.Scripts.Units.Enemy;
 using _Game.Scripts.Units.Player;
@@ -12,6 +13,7 @@ namespace _Game.Scripts.Multiplayer
     {
         #region FIELDS SERIALIZED
 
+        [field: SerializeField] public LossCounter LossCounter { get; private set; }
         [SerializeField] private PlayerUnit playerPrefab;
         [SerializeField] private EnemyUnit enemyPrefab;
 
@@ -66,6 +68,7 @@ namespace _Game.Scripts.Multiplayer
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
             _room.OnStateChange += OnStateChange;
+
             _room.OnMessage<string>("Shoot", ApplyShoot);
         }
 
@@ -89,6 +92,7 @@ namespace _Game.Scripts.Multiplayer
             var unit = Instantiate(playerPrefab, position, Quaternion.identity);
 
             unit.Initialize("", player);
+            _room.OnMessage<string>("Respawn", unit.Respawn);
         }
 
         private void CreateEnemy(string key, Player player)

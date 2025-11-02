@@ -49,6 +49,7 @@ namespace _Game.Scripts.Units.Enemy
         public override void ApplyDamage(int damage)
         {
             base.ApplyDamage(damage);
+            
             var data = new Dictionary<string, object>
             {
                 { "id", _id },

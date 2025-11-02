@@ -40,5 +40,8 @@ public partial class Player : Schema {
 
 	[Type(10, "int8")]
 	public sbyte currentHP = default(sbyte);
+
+	[Type(11, "uint8")]
+	public byte loss = default(byte);
 }
 

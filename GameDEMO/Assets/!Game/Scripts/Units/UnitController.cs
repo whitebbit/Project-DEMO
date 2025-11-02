@@ -10,6 +10,8 @@ namespace _Game.Scripts.Units
     {
         #region FIELDS SERIALIZED
 
+        [SerializeField] protected Unit unit;
+        
         #endregion
 
         #region FIELDS

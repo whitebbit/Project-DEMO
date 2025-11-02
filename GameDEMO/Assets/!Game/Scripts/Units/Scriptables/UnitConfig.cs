@@ -11,6 +11,9 @@ namespace _Game.Scripts.Units.Scriptables
 
         [SerializeField] private MovementAttributes movementAttributes;
         public MovementAttributes Movement => movementAttributes;
+        
+        [SerializeField] private RespawnAttributes respawnAttributes;
+        public RespawnAttributes Respawn => respawnAttributes;
     }
 
     [Serializable]
@@ -29,5 +32,12 @@ namespace _Game.Scripts.Units.Scriptables
         public float JumpForce => jumpForce;
         [SerializeField] private float jumpDelay = 0.2f;
         public float JumpDelay => jumpDelay;
+    }
+    
+    [Serializable]
+    public class RespawnAttributes
+    {
+        [SerializeField] private float delay = 3;
+        public float Delay => delay;
     }
 }

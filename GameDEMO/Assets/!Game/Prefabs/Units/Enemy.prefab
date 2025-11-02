@@ -465,6 +465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: 73c1c5c7964ad484d826f610b232e9fc, type: 2}
+  <Respawned>k__BackingField: 0
   controller: {fileID: 4688092829850788519}
   movement: {fileID: 121082612540568298}
 --- !u!114 &4688092829850788519
@@ -479,6 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14bb30713d2d4caeb59aa48b6c6a9bd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unit: {fileID: 5643395744002010801}
   inventory: {fileID: 9068773390515840833}
   movement: {fileID: 121082612540568298}
   look: {fileID: 3003632642062767036}

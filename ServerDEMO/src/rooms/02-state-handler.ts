@@ -34,6 +34,9 @@ export class Player extends Schema {
 
     @type("int8")
     currentHP = 0;
+
+    @type("uint8")
+    loss = 0;
 }
 
 export class State extends Schema {
@@ -73,7 +76,7 @@ export class State extends Schema {
 }
 
 export class StateHandlerRoom extends Room<State> {
-    maxClients = 4;
+    maxClients = 2;
 
     onCreate (options) {
         console.log("StateHandlerRoom created!", options);
@@ -89,8 +92,31 @@ export class StateHandlerRoom extends Room<State> {
         });
 
         this.onMessage("damage", (client, data) => {
-            const player = this.state.players.get(data.id);
-            player.currentHP -= data.value;
+            
+            const clientId = data.id;
+            const player = this.state.players.get(clientId);
+
+            let hp = player.currentHP -= data.value;
+
+            if(hp >0) {
+                player.currentHP = hp;
+                return;
+            } 
+
+            player.loss += 1;
+            player.currentHP = player.maxHP;
+            
+            for(const player of this.clients) {
+
+                if(player.id != clientId) continue;
+
+                const x = Math.floor(Math.random() * 50) - 25;
+                const z = Math.floor(Math.random() * 50) - 25;
+                
+                const message = JSON.stringify({x, z});
+
+                player.send("Respawn", message);
+            }
         });
     }
 
@@ -99,7 +125,10 @@ export class StateHandlerRoom extends Room<State> {
     }
 
     onJoin (client: Client, data: any) {
-        client.send("hello", "world");
+        
+        if(this.clients.length > 1) {
+        this.lock();
+    }
         this.state.createPlayer(client.sessionId, data);
     }
 

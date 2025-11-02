@@ -1,5 +1,6 @@
 ﻿using System;
 using _Game.Scripts.Units.Interfaces;
+using _Game.Scripts.Units.Player;
 using _Game.Scripts.Units.Scriptables;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace _Game.Scripts.Units
     {
         #region FIELDS SERIALIZED
 
-        [SerializeField] private UnitConfig config;
+        [SerializeField] protected UnitConfig config;
 
         #endregion
 
@@ -18,6 +19,8 @@ namespace _Game.Scripts.Units
         protected UnitHealth Health;
         public UnitHealth UnitHealth => Health ??= new UnitHealth(config.Health.MaxHealth);
         public UnitConfig Config => config;
+
+        [field: SerializeField] public bool Respawned { get; protected set; }
 
         #endregion
 
@@ -29,7 +32,10 @@ namespace _Game.Scripts.Units
 
         public virtual void Initialize(string id, global::Player player)
         {
-            
+        }
+
+        public virtual void Respawn(string respawnInfo)
+        {
         }
 
         public virtual void Destroy()
@@ -41,6 +47,8 @@ namespace _Game.Scripts.Units
 
         public virtual void ApplyDamage(int damage)
         {
+            if (Respawned) return;
+            
             UnitHealth.HealthPoints -= damage;
         }
     }

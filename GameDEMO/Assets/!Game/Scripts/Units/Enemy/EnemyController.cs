@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using _Game.Scripts.Multiplayer;
 using _Game.Scripts.Weapons;
 using Colyseus.Schema;
 using UnityEngine;
@@ -83,6 +85,15 @@ namespace _Game.Scripts.Units.Enemy
                         break;
                     case "rY":
                         look.SetRotateY((float)change.Value);
+                        break;
+                    case "currentHP":
+                        if ((sbyte)change.Value > (sbyte)change.PreviousValue)
+                        {
+                            unit.UnitHealth.HealthPoints = Convert.ToSByte(change.Value);
+                        }
+                        break;
+                    case "loss":
+                        MultiplayerManager.Instance.LossCounter.SetEnemyLoss((byte)change.Value);
                         break;
                 }
             }

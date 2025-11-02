@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Game.Scripts.Controllers;
 using _Game.Scripts.Controllers.Inputs;
 using _Game.Scripts.Controllers.Interfaces;
+using _Game.Scripts.Multiplayer;
 using _Game.Scripts.Weapons;
 using Colyseus.Schema;
 using UnityEngine;
@@ -13,13 +14,13 @@ namespace _Game.Scripts.Units.Player
     {
         #region FIELDS SERIALIZED
 
-        [SerializeField] private Unit unit;
         [SerializeField] private UnitInventory inventory;
         [SerializeField] private UnitMovement movement;
         [SerializeField] private CameraLook cameraLook;
         [SerializeField] private PlayerStateTransmitter stateTransmitter;
 
         private IInput _input;
+        private Vector3 _moveDirection = Vector3.zero;
 
         #endregion
 
@@ -42,25 +43,38 @@ namespace _Game.Scripts.Units.Player
 
         private void FixedUpdate()
         {
-            movement.Move(new Vector3(_input.GetHorizontalAxis, 0, _input.GetVerticalAxis));
+            movement.Move(_moveDirection);
         }
 
         protected override void Update()
         {
+            if (unit.Respawned)
+            {
+                SetMoveDirection(0, 0);
+
+                cameraLook.RotateX(0);
+                cameraLook.RotateY(0);
+
+                stateTransmitter.SendTransform(customVelocity: Vector3.zero, customRotation: Vector2.zero);
+                return;
+            }
+
             base.Update();
-            
+
             if (_input.GetShootKeyDown && inventory.EquippedWeapon.TryShoot(out var info))
                 stateTransmitter.SendShoot(ref info);
-            
+
             stateTransmitter.SendTransform();
         }
 
         #endregion
 
         #region METHODS
-        
+
         protected override void HandleMovement()
         {
+            SetMoveDirection(_input.GetHorizontalAxis, _input.GetVerticalAxis);
+
             cameraLook.RotateX(-_input.GetMouseYAxis);
             cameraLook.RotateY(_input.GetMouseXAxis);
 
@@ -68,19 +82,37 @@ namespace _Game.Scripts.Units.Player
                 movement.Jump();
         }
 
+        private void SetMoveDirection(float x, float z)
+        {
+            _moveDirection.x = x;
+            _moveDirection.z = z;
+        }
+
         public override void OnChange(List<DataChange> changes)
         {
             foreach (var change in changes)
             {
-                unit.UnitHealth.HealthPoints = change.Field switch
+                switch (change.Field)
                 {
-                    "currentHP" => Convert.ToSByte(change.Value),
-                    _ => unit.UnitHealth.HealthPoints
-                };
-                
+                    case "currentHP":
+                        unit.UnitHealth.HealthPoints = Convert.ToSByte(change.Value);
+                        break;
+                    case "loss":
+                        MultiplayerManager.Instance.LossCounter.SetPlayerLoss((byte)change.Value);
+                        break;
+                }
             }
         }
 
         #endregion
+    }
+
+    [Serializable]
+    public struct RespawnInfo
+    {
+        public float x;
+        public float z;
+
+        public Vector3 ToVector3(float y = 0) => new Vector3(x, y, z);
     }
 }
