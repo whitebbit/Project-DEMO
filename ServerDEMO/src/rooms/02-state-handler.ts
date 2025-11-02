@@ -53,6 +53,9 @@ export class Player extends Schema {
 
     @type("uint8")
     loss = 0;
+
+    @type("int8")
+    wI = 0;
 }
 
 export class State extends Schema {
@@ -153,6 +156,11 @@ export class StateHandlerRoom extends Room<State> {
                 }
             }
         });
+
+        this.onMessage("weapon_switch", (client, data) => {
+            const player = this.state.players.get(client.sessionId);
+            player.wI = data.wI;
+          });
       }
 
     onAuth(client, options, req) {

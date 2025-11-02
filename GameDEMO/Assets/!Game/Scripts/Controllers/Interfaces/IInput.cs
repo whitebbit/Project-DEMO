@@ -10,5 +10,7 @@ namespace _Game.Scripts.Controllers.Interfaces
 
         public bool GetJumpKeyDown { get; }
         public bool GetShootKeyDown { get; }
+        
+        public float GetWeaponSwitchAxis { get; }
     }
 }

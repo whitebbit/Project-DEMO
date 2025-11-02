@@ -14,5 +14,8 @@ namespace _Game.Scripts.Controllers.Inputs
         public bool GetJumpKeyDown => Input.GetKeyDown(KeyCode.Space);
         
         public bool GetShootKeyDown => Input.GetMouseButton(0);
+        
+        public float GetWeaponSwitchAxis => Input.GetAxis("Mouse ScrollWheel"); 
+
     }
 }

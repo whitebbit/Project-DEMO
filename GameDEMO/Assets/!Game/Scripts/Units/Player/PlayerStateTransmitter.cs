@@ -33,6 +33,16 @@ namespace _Game.Scripts.Units.Player
 
         #region METHODS
 
+        public void SendWeaponSwitch(int index)
+        {
+            var data = new Dictionary<string, object>
+            {
+                { "wI", index },
+            };
+            
+            _multiplayerManager.SendMessage("weapon_switch", data);
+        }
+        
         public void SendShoot(ref ShootInfo info)
         {
             info.key = _multiplayerManager.GetSessionID();

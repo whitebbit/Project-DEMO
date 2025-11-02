@@ -19,8 +19,7 @@ namespace _Game.Scripts.Units
         protected UnitHealth Health;
         public UnitHealth UnitHealth => Health ??= new UnitHealth(config.Health.MaxHealth);
         public UnitConfig Config => config;
-
-        [field: SerializeField] public bool Respawned { get; protected set; }
+        public bool Respawned { get; protected set; }
 
         #endregion
 

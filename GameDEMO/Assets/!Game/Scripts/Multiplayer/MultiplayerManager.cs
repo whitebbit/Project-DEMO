@@ -76,8 +76,7 @@ namespace _Game.Scripts.Multiplayer
             
             InitializeSpawnPoints();
         }
-
-
+        
         private void OnStateChange(State state, bool isFirstState)
         {
             if (!isFirstState) return;

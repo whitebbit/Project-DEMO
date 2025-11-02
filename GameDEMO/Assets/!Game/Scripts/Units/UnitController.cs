@@ -42,6 +42,11 @@ namespace _Game.Scripts.Units
         {
             
         }
+
+        public virtual void EquipWeapon(int index)
+        {
+            
+        }
         
         #endregion
         

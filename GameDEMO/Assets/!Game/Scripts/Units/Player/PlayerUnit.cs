@@ -26,6 +26,7 @@ namespace _Game.Scripts.Units.Player
         public override void Initialize(string id, global::Player player)
         {
             player.OnChange += controller.OnChange;
+            controller.EquipWeapon(player.wI);
         }
 
         public override void Respawn(string respawnInfo)

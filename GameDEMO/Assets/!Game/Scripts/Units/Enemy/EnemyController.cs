@@ -51,6 +51,14 @@ namespace _Game.Scripts.Units.Enemy
             movement.Move(movement.TargetPosition);
         }
 
+        public override void EquipWeapon(int index)
+        {
+            inventory.EquipWeapon(index);
+            Debug.Log(index);
+            Debug.Log(inventory.EquippedWeapon);
+            Debug.Log(inventory.CurrentIndex);
+        }
+
         public override void OnChange(List<DataChange> changes)
         {
             SaveReceiveTime();
@@ -94,6 +102,9 @@ namespace _Game.Scripts.Units.Enemy
                         break;
                     case "loss":
                         MultiplayerManager.Instance.LossCounter.SetEnemyLoss((byte)change.Value);
+                        break;
+                    case "wI":
+                        EquipWeapon(Convert.ToSByte(change.Value));
                         break;
                 }
             }

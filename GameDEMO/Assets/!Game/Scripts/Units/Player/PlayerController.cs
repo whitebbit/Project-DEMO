@@ -64,6 +64,8 @@ namespace _Game.Scripts.Units.Player
             if (_input.GetShootKeyDown && inventory.EquippedWeapon.TryShoot(out var info))
                 stateTransmitter.SendShoot(ref info);
 
+            HandleWeaponSwitch();
+
             stateTransmitter.SendTransform();
         }
 
@@ -80,6 +82,23 @@ namespace _Game.Scripts.Units.Player
 
             if (_input.GetJumpKeyDown)
                 movement.Jump();
+        }
+
+        private void HandleWeaponSwitch()
+        {
+            var switchAxis = _input.GetWeaponSwitchAxis;
+            
+            switch (switchAxis)
+            {
+                case > 0f:
+                    inventory.EquipNextWeapon();
+                    break;
+                case < 0f:
+                    inventory.EquipPreviousWeapon();
+                    break;
+            }
+
+            stateTransmitter.SendWeaponSwitch(inventory.CurrentIndex);
         }
 
         private void SetMoveDirection(float x, float z)
@@ -99,6 +118,9 @@ namespace _Game.Scripts.Units.Player
                         break;
                     case "loss":
                         MultiplayerManager.Instance.LossCounter.SetPlayerLoss((byte)change.Value);
+                        break;
+                    case "wI":
+                        EquipWeapon(Convert.ToSByte(change.Value));
                         break;
                 }
             }
