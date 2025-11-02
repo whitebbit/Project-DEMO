@@ -1,15 +1,31 @@
 import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
+interface SpawnPoint {
+    x: number;
+    y: number;
+    z: number;
+  }
+
 export class Player extends Schema {
+
     @type("number")
-    pX = Math.floor(Math.random() * 50) - 25;
+    spX = 0;
+
+    @type("number")
+    spY = 0;
+
+    @type("number")
+    spZ = 0;
+    
+    @type("number")
+    pX = 0;
 
     @type("number")
     pY = 0;
 
     @type("number")
-    pZ = Math.floor(Math.random() * 50) - 25;
+    pZ = 0;
 
     @type("number")
     vX = 0;
@@ -76,63 +92,84 @@ export class State extends Schema {
 }
 
 export class StateHandlerRoom extends Room<State> {
+    allSpawnPoints: SpawnPoint[] = [];
+    usedSpawnIndexes: Set<number> = new Set();
+    spawnPointsReady: boolean = false;
+    waitingClients: { client: Client; data: any }[] = [];
     maxClients = 2;
 
-    onCreate (options) {
-        console.log("StateHandlerRoom created!", options);
-
+    onCreate(options: any) {
         this.setState(new State());
 
-        this.onMessage("move", (client, data) => {
-            this.state.movePlayer(client.sessionId, data);
-        });
+        this.onMessage("register_spawn_points", (client, data: any[]) => {
+          if (this.spawnPointsReady) return; 
+    
+          for (const p of data) {
+            this.allSpawnPoints.push({ x: p.x, y: p.y, z: p.z });
+          }
+    
+          this.spawnPointsReady = true;
+    
+          for (const entry of this.waitingClients) {
+            this.spawnPlayer(entry.client, entry.data);
+          }
 
+          this.waitingClients = [];
+        });
+    
+        this.onMessage("move", (client, data) => {
+          this.state.movePlayer(client.sessionId, data);
+        });
+    
         this.onMessage("shoot", (client, data) => {
-            this.broadcast("Shoot", data, {except: client});
+          this.broadcast("Shoot", data, { except: client });
         });
 
         this.onMessage("damage", (client, data) => {
-            
-            const clientId = data.id;
-            const player = this.state.players.get(clientId);
+            const targetId = data.id;
+            const player = this.state.players.get(targetId);
+            if (!player) return;
 
-            let hp = player.currentHP -= data.value;
+            let hp = player.currentHP - data.value;
 
-            if(hp >0) {
+            if (hp > 0) {
                 player.currentHP = hp;
                 return;
-            } 
+            }
 
             player.loss += 1;
             player.currentHP = player.maxHP;
-            
-            for(const player of this.clients) {
 
-                if(player.id != clientId) continue;
+            const x = player.spX;
+            const y = player.spY;
+            const z = player.spZ;
 
-                const x = Math.floor(Math.random() * 50) - 25;
-                const z = Math.floor(Math.random() * 50) - 25;
-                
-                const message = JSON.stringify({x, z});
+            const message = JSON.stringify({ x, y, z });
 
-                player.send("Respawn", message);
+            for (const cln of this.clients) {
+                if (cln.sessionId === targetId) {
+                    cln.send("Respawn", message);
+                    break;
+                }
             }
         });
-    }
+      }
 
     onAuth(client, options, req) {
         return true;
     }
 
-    onJoin (client: Client, data: any) {
-        
-        if(this.clients.length > 1) {
-        this.lock();
-    }
-        this.state.createPlayer(client.sessionId, data);
-    }
+    onJoin(client: Client, data: any) {
+        if (!this.spawnPointsReady) {
+          this.waitingClients.push({ client, data });
+          return;
+        }
+    
+        this.spawnPlayer(client, data);
+      }
 
-    onLeave (client) {
+    onLeave(client: Client) {
+        const player = this.state.players.get(client.sessionId);
         this.state.removePlayer(client.sessionId);
     }
 
@@ -140,4 +177,38 @@ export class StateHandlerRoom extends Room<State> {
         console.log("Dispose StateHandlerRoom");
     }
 
+    spawnPlayer(client: Client, data: any) {
+        const spawn = this.getFreeSpawnPoint();
+    
+        const player = new Player();
+        player.pX = spawn.x;
+        player.pY = spawn.y;
+        player.pZ = spawn.z;
+        player.spX = spawn.x;
+        player.spY = spawn.y;
+        player.spZ = spawn.z;
+    
+        player.speed = data.speed ?? 5;
+        player.maxHP = data.hp ?? 100;
+        player.currentHP = player.maxHP;
+    
+        this.state.players.set(client.sessionId, player);
+    
+        if (this.clients.length >= 2) this.lock();
+    }
+
+    getFreeSpawnPoint(): SpawnPoint {
+        const free = this.allSpawnPoints.filter((_, i) => !this.usedSpawnIndexes.has(i));
+    
+        if (free.length === 0) {
+          console.warn("[SERVER] No free spawn points left!");
+          return { x: 0, y: 0, z: 0 };
+        }
+    
+        const index = Math.floor(Math.random() * free.length);
+        const spawn = free[index];
+    
+        this.usedSpawnIndexes.add(index);
+        return spawn;
+    }
 }

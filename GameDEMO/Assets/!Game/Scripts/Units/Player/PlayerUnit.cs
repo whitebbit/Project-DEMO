@@ -31,7 +31,7 @@ namespace _Game.Scripts.Units.Player
         public override void Respawn(string respawnInfo)
         {
             var info = JsonUtility.FromJson<RespawnInfo>(respawnInfo);
-            Debug.Log(info);
+            Debug.Log(info.ToVector3());
 
             StartCoroutine(RespawnCoroutine(info.ToVector3(transform.position.y)));
         }

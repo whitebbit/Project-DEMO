@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using _Game.Scripts.UI;
 using _Game.Scripts.Units;
 using _Game.Scripts.Units.Enemy;
@@ -6,6 +8,7 @@ using _Game.Scripts.Units.Player;
 using _Game.Scripts.Weapons;
 using Colyseus;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Game.Scripts.Multiplayer
 {
@@ -16,13 +19,14 @@ namespace _Game.Scripts.Multiplayer
         [field: SerializeField] public LossCounter LossCounter { get; private set; }
         [SerializeField] private PlayerUnit playerPrefab;
         [SerializeField] private EnemyUnit enemyPrefab;
+        [SerializeField] private List<Transform> spawnPoints = new();
 
         #endregion
 
         #region FIELDS
 
         private ColyseusRoom<State> _room;
-        private Dictionary<string, EnemyUnit> _enemies = new();
+        private readonly Dictionary<string, EnemyUnit> _enemies = new();
 
         #endregion
 
@@ -68,14 +72,16 @@ namespace _Game.Scripts.Multiplayer
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
             _room.OnStateChange += OnStateChange;
-
             _room.OnMessage<string>("Shoot", ApplyShoot);
+            
+            InitializeSpawnPoints();
         }
+
 
         private void OnStateChange(State state, bool isFirstState)
         {
             if (!isFirstState) return;
-
+            
             state.players.ForEach((key, player) =>
             {
                 if (key == _room.SessionId) CreatePlayer(player);
@@ -122,6 +128,18 @@ namespace _Game.Scripts.Multiplayer
             enemy.Controller.Shoot(info);
         }
 
+        private void InitializeSpawnPoints()
+        {
+            var spawnList = spawnPoints.Select(p => new Dictionary<string, float>
+            {
+                { "x", p.position.x },
+                { "y", p.position.y },
+                { "z", p.position.z },
+            }).ToList();
+
+            _room.Send("register_spawn_points", spawnList);
+        }
+        
         #endregion
     }
 }

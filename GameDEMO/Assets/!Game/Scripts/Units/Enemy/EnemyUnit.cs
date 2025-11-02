@@ -48,6 +48,8 @@ namespace _Game.Scripts.Units.Enemy
 
         public override void ApplyDamage(int damage)
         {
+            if (Respawned) return;
+            
             base.ApplyDamage(damage);
             
             var data = new Dictionary<string, object>
