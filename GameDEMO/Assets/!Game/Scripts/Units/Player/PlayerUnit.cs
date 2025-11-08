@@ -42,8 +42,9 @@ namespace _Game.Scripts.Units.Player
         private IEnumerator RespawnCoroutine(Vector3 position, Vector3 rotation)
         {
             Respawned = true;
+            
             transform.position = position;
-            transform.eulerAngles = rotation;
+            transform.eulerAngles = new Vector3(0, rotation.y, 0);
 
             yield return new WaitForSeconds(config.Respawn.Delay);
 

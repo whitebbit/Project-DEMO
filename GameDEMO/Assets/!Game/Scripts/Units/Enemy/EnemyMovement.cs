@@ -14,10 +14,10 @@ namespace _Game.Scripts.Units.Enemy
         public override float Speed => _speed;
         public override Vector3 Velocity { get; protected set; }
         public Vector3 TargetPosition { get; private set; } = Vector3.zero;
-        
+
         private float _velocityMagnitude;
         private float _speed;
-        
+
         #endregion
 
         #region UNITY FUNCTIONS
@@ -45,8 +45,15 @@ namespace _Game.Scripts.Units.Enemy
         {
             TargetPosition = position + velocity * averageInterval;
             _velocityMagnitude = velocity.magnitude;
-            
+
             Velocity = velocity;
+        }
+
+        public override void Teleport(Vector3 position)
+        {
+            TargetPosition = position;
+            _velocityMagnitude = 0;
+            Velocity = Vector3.zero;
         }
 
         public override void GetMoveInfo(out Vector3 position, out Vector3 velocity)

@@ -141,8 +141,7 @@ namespace _Game.Scripts.Units.Player
 
             cameraLook.RotateX(0);
 
-            stateTransmitter.SendTransform(customVelocity: Vector3.zero,
-                customRotation: new Vector2(0, transform.eulerAngles.y));
+            stateTransmitter.SendTransform(customVelocity: Vector3.zero, customRotation: Vector3.zero);
         }
 
         #endregion

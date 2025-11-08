@@ -79,13 +79,14 @@ namespace _Game.Scripts.Units.Enemy
                     case "rotation":
                         var rotationValue = (Vector2Schema)change.Value;
                         var rotation = rotationValue.ToVector2();
-                        
+
                         look.SetRotateX(rotation.x);
                         look.SetRotateY(rotation.y);
                         break;
                     case "currentHP":
                         if ((sbyte)change.Value > (sbyte)change.PreviousValue)
                             unit.UnitHealth.HealthPoints = Convert.ToSByte(change.Value);
+                       
                         break;
                     case "loss":
                         MultiplayerManager.Instance.LossCounter.SetEnemyLoss((byte)change.Value);
@@ -96,7 +97,10 @@ namespace _Game.Scripts.Units.Enemy
                 }
             }
 
-            movement.SetMovement(position, velocity, AverageInterval);
+            if (unit.Respawned)
+                movement.Teleport(position);
+            else
+                movement.SetMovement(position, velocity, AverageInterval);
         }
 
         #endregion

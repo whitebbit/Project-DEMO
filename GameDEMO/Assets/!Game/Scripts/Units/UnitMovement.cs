@@ -37,6 +37,11 @@ namespace _Game.Scripts.Units
         {
         }
 
+        public virtual void Teleport(Vector3 position)
+        {
+            
+        }
+        
         #endregion
 
         #region GETTERS

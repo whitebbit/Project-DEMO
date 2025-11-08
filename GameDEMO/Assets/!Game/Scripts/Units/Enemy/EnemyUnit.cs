@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Game.Scripts.Multiplayer;
@@ -21,6 +22,7 @@ namespace _Game.Scripts.Units.Enemy
         public UnitController Controller => controller;
         private global::Player _player;
         private string _id;
+
         #endregion
 
         #region UNITY FUNCTIONS
@@ -37,6 +39,7 @@ namespace _Game.Scripts.Units.Enemy
             Health = new UnitHealth(player.maxHP);
             movement.SetSpeed(_player.speed);
 
+            Health.OnDying += () => Respawn(null);
             _player.OnChange += controller.OnChange;
         }
 
@@ -49,9 +52,9 @@ namespace _Game.Scripts.Units.Enemy
         public override void ApplyDamage(int damage)
         {
             if (Respawned) return;
-            
+
             base.ApplyDamage(damage);
-            
+
             var data = new Dictionary<string, object>
             {
                 { "id", _id },
@@ -59,6 +62,22 @@ namespace _Game.Scripts.Units.Enemy
             };
 
             MultiplayerManager.Instance.SendMessage("damage", data);
+        }
+
+        public override void Respawn(object data)
+        {
+            StartCoroutine(RespawnCoroutine());
+        }
+
+        private IEnumerator RespawnCoroutine()
+        {
+            yield return null;
+
+            Respawned = true;
+
+            yield return new WaitForSeconds(config.Respawn.Delay);
+
+            Respawned = false;
         }
 
         #endregion
