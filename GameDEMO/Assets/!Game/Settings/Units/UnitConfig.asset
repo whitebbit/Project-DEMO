@@ -16,5 +16,7 @@ MonoBehaviour:
     maxHealth: 100
   movementAttributes:
     speed: 10
-    jumpForce: 5
+    jumpForce: 7.5
     jumpDelay: 0.2
+  respawnAttributes:
+    delay: 3

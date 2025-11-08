@@ -19,12 +19,13 @@ namespace _Game.Scripts.Units.Player
         [SerializeField] private CameraLook cameraLook;
         [SerializeField] private PlayerStateTransmitter stateTransmitter;
 
-        private IInput _input;
-        private Vector3 _moveDirection = Vector3.zero;
-
         #endregion
 
         #region FIELDS
+
+        private IInput _input;
+        private Vector3 _moveDirection = Vector3.zero;
+        private bool _cursorLocked;
 
         #endregion
 
@@ -37,6 +38,7 @@ namespace _Game.Scripts.Units.Player
 
         private void Start()
         {
+            _cursorLocked = true;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -48,20 +50,22 @@ namespace _Game.Scripts.Units.Player
 
         protected override void Update()
         {
-            if (unit.Respawned)
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                SetMoveDirection(0, 0);
+                _cursorLocked = !_cursorLocked;
+                Cursor.lockState = _cursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
+                Cursor.visible = _cursorLocked;
+            }
 
-                cameraLook.RotateX(0);
-                cameraLook.RotateY(0);
-
-                stateTransmitter.SendTransform(customVelocity: Vector3.zero, customRotation: Vector2.zero);
+            if (unit.Respawned || !_cursorLocked)
+            {
+                ResetControls();
                 return;
             }
 
             base.Update();
 
-            if (_input.GetShootKeyDown && inventory.EquippedWeapon.TryShoot(out var info))
+            if (_input.GetShootKeyDown && _cursorLocked && inventory.EquippedWeapon.TryShoot(out var info))
                 stateTransmitter.SendShoot(ref info);
 
             HandleWeaponSwitch();
@@ -75,6 +79,9 @@ namespace _Game.Scripts.Units.Player
 
         protected override void HandleMovement()
         {
+            if (!_cursorLocked) return;
+
+
             SetMoveDirection(_input.GetHorizontalAxis, _input.GetVerticalAxis);
 
             cameraLook.RotateX(-_input.GetMouseYAxis);
@@ -86,8 +93,10 @@ namespace _Game.Scripts.Units.Player
 
         private void HandleWeaponSwitch()
         {
+            if (!_cursorLocked) return;
+
             var switchAxis = _input.GetWeaponSwitchAxis;
-            
+
             switch (switchAxis)
             {
                 case > 0f:
@@ -126,15 +135,16 @@ namespace _Game.Scripts.Units.Player
             }
         }
 
+        private void ResetControls()
+        {
+            SetMoveDirection(0, 0);
+
+            cameraLook.RotateX(0);
+
+            stateTransmitter.SendTransform(customVelocity: Vector3.zero,
+                customRotation: new Vector2(0, transform.eulerAngles.y));
+        }
+
         #endregion
-    }
-
-    [Serializable]
-    public struct RespawnInfo
-    {
-        public float x;
-        public float z;
-
-        public Vector3 ToVector3(float y = 0) => new Vector3(x, y, z);
     }
 }

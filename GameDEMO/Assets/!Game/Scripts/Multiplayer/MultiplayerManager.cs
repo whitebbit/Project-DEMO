@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using _Game.Scripts.Maps;
+using _Game.Scripts.Multiplayer.Schemas;
 using _Game.Scripts.UI;
 using _Game.Scripts.Units;
 using _Game.Scripts.Units.Enemy;
@@ -8,7 +9,6 @@ using _Game.Scripts.Units.Player;
 using _Game.Scripts.Weapons;
 using Colyseus;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace _Game.Scripts.Multiplayer
 {
@@ -17,9 +17,10 @@ namespace _Game.Scripts.Multiplayer
         #region FIELDS SERIALIZED
 
         [field: SerializeField] public LossCounter LossCounter { get; private set; }
+        [field: SerializeField] public Map Map { get; private set; }
+
         [SerializeField] private PlayerUnit playerPrefab;
         [SerializeField] private EnemyUnit enemyPrefab;
-        [SerializeField] private List<Transform> spawnPoints = new();
 
         #endregion
 
@@ -64,18 +65,18 @@ namespace _Game.Scripts.Multiplayer
 
         private async void Connect()
         {
-            var spawnList = spawnPoints.Select(p => new Dictionary<string, float>
-            {
-                { "x", p.position.x },
-                { "y", p.position.y },
-                { "z", p.position.z },
-            }).ToList();
+            var spawnIndex = Random.Range(0, Map.SpawnPointsCount);
+            Map.GetPoint(spawnIndex, out var position, out var rotation);
 
             var data = new Dictionary<string, object>
             {
                 { "speed", playerPrefab.Config.Movement.Speed },
                 { "hp", playerPrefab.Config.Health.MaxHealth },
-                { "spawnPoints", spawnList }
+                { "spawnsCount", Map.SpawnPointsCount },
+                { "pos", position },
+                { "rot", rotation },
+                { "spawn", spawnIndex },
+                { "skins", Map.SkinsCount },
             };
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
@@ -99,10 +100,12 @@ namespace _Game.Scripts.Multiplayer
 
         private void CreatePlayer(Player player)
         {
-            var unit = Instantiate(playerPrefab, player.position.ToVector3(), Quaternion.identity);
+            var rotation = Quaternion.Euler(0, player.rotation.y, 0);
+            var unit = Instantiate(playerPrefab, player.position.ToVector3(), rotation);
 
             unit.Initialize("", player);
-            _room.OnMessage<string>("Respawn", unit.Respawn);
+            unit.SkinLoader.LoadSkin(Map.GetSkin(player.sI));
+            _room.OnMessage<object>("Respawn", unit.Respawn);
         }
 
         private void CreateEnemy(string key, Player player)
@@ -110,6 +113,7 @@ namespace _Game.Scripts.Multiplayer
             var enemy = Instantiate(enemyPrefab, player.position.ToVector3(), Quaternion.identity);
 
             enemy.Initialize(key, player);
+            enemy.SkinLoader.LoadSkin(Map.GetSkin(player.sI));
 
             _enemies.Add(key, enemy);
         }

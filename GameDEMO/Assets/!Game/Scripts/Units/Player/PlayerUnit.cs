@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using _Game.Scripts.Multiplayer;
 using Colyseus.Schema;
 using UnityEngine;
 
@@ -29,20 +31,22 @@ namespace _Game.Scripts.Units.Player
             controller.EquipWeapon(player.wI);
         }
 
-        public override void Respawn(string respawnInfo)
+        public override void Respawn(object data)
         {
-            var info = JsonUtility.FromJson<RespawnInfo>(respawnInfo);
+            var spawnIndex = Convert.ToInt32(data);
 
-            StartCoroutine(RespawnCoroutine(info.ToVector3(transform.position.y)));
+            MultiplayerManager.Instance.Map.GetPoint(spawnIndex, out var position, out var rotation);
+            StartCoroutine(RespawnCoroutine(position, rotation));
         }
 
-        private IEnumerator RespawnCoroutine(Vector3 position)
+        private IEnumerator RespawnCoroutine(Vector3 position, Vector3 rotation)
         {
             Respawned = true;
             transform.position = position;
-            
+            transform.eulerAngles = rotation;
+
             yield return new WaitForSeconds(config.Respawn.Delay);
-            
+
             Respawned = false;
         }
 

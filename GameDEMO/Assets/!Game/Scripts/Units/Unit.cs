@@ -11,13 +11,16 @@ namespace _Game.Scripts.Units
         #region FIELDS SERIALIZED
 
         [SerializeField] protected UnitConfig config;
-
+        [SerializeField] private UnitSkinLoader skinLoader;
+        
         #endregion
 
         #region FIELDS
 
         protected UnitHealth Health;
         public UnitHealth UnitHealth => Health ??= new UnitHealth(config.Health.MaxHealth);
+
+        public UnitSkinLoader SkinLoader => skinLoader;
         public UnitConfig Config => config;
         public bool Respawned { get; protected set; }
 
@@ -33,7 +36,7 @@ namespace _Game.Scripts.Units
         {
         }
 
-        public virtual void Respawn(string respawnInfo)
+        public virtual void Respawn(object data)
         {
         }
 

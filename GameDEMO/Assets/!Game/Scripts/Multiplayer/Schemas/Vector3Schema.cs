@@ -6,7 +6,6 @@
 // 
 
 using Colyseus.Schema;
-using UnityEngine;
 
 public partial class Vector3Schema : Schema {
 	[Type(0, "number")]
@@ -19,10 +18,3 @@ public partial class Vector3Schema : Schema {
 	public float z = default(float);
 }
 
-public static class Vector3SchemaExtensions
-{
-	public static Vector3 ToVector3(this Vector3Schema vector)
-	{
-		return new Vector3(vector.x, vector.y, vector.z);
-	}
-}

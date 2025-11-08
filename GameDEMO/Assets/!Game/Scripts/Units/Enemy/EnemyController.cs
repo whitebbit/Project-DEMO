@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Game.Scripts.Multiplayer;
+using _Game.Scripts.Multiplayer.Schemas;
 using _Game.Scripts.Weapons;
 using Colyseus.Schema;
 using UnityEngine;
@@ -54,9 +55,6 @@ namespace _Game.Scripts.Units.Enemy
         public override void EquipWeapon(int index)
         {
             inventory.EquipWeapon(index);
-            Debug.Log(index);
-            Debug.Log(inventory.EquippedWeapon);
-            Debug.Log(inventory.CurrentIndex);
         }
 
         public override void OnChange(List<DataChange> changes)

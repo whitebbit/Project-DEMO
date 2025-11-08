@@ -31,5 +31,8 @@ public partial class Player : Schema {
 
 	[Type(7, "int8")]
 	public sbyte wI = default(sbyte);
+
+	[Type(8, "int8")]
+	public sbyte sI = default(sbyte);
 }
 

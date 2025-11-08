@@ -62,21 +62,21 @@ namespace _Game.Scripts.Units.Player
 
             var data = new Dictionary<string, object>
             {
-                { "position", new Dictionary<string, float>
+                { "pos", new Dictionary<string, float>
                     {
                         { "x", pos.x },
                         { "y", pos.y },
                         { "z", pos.z }
                     }
                 },
-                { "velocity", new Dictionary<string, float>
+                { "vel", new Dictionary<string, float>
                     {
                         { "x", vel.x },
                         { "y", vel.y },
                         { "z", vel.z }
                     }
                 },
-                { "rotation", new Dictionary<string, float>
+                { "rot", new Dictionary<string, float>
                     {
                         { "x", rot.x },
                         { "y", rot.y }

@@ -59,6 +59,38 @@ export class Player extends Schema {
 
     @type("int8")
     wI = 0;
+
+    @type("int8")
+    sI = 0;
+
+    setPosition(vector: Vector3) {
+      const position = new Vector3Schema();
+
+      position.x = vector.x;
+      position.y = vector.y;
+      position.z = vector.z;
+
+      this.position = position;
+    }
+
+    setRotation(vector: Vector2) {
+      const rotation = new Vector2Schema();
+
+      rotation.x = vector.x;
+      rotation.y = vector.y;
+
+      this.rotation = rotation;
+    }
+
+    setVelocity(vector: Vector3) {
+      const velocity = new Vector3Schema();
+
+      velocity.x = vector.x;
+      velocity.y = vector.y;
+      velocity.z = vector.z;
+
+      this.velocity = velocity;
+    }
 }
 
 export class State extends Schema {
@@ -67,13 +99,20 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    createPlayer(sessionId: string, data: any) {
+    createPlayer(sessionId: string, data: any, skin: any) {
         const player = new Player();
 
+        player.sI = skin;
         player.maxHP = data.hp;
         player.currentHP = data.hp;
         player.speed = data.speed;
 
+        if (data.pos)
+          player.setPosition(data.pos);
+        
+        if (data.rot)
+          player.setRotation(data.rot);
+        
         this.players.set(sessionId, player);
     }
 
@@ -84,136 +123,116 @@ export class State extends Schema {
     movePlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
         
-        if (data.position){
-          var position = new Vector3Schema();
-
-          position.x = data.position.x;
-          position.y = data.position.y;
-          position.z = data.position.z;
-
-          player.position = position;
-        }
+        if (data.pos)
+          player.setPosition(data.pos);
         
-        if (data.velocity){
-          var velocity = new Vector3Schema();
-
-          velocity.x = data.velocity.x;
-          velocity.y = data.velocity.y;
-          velocity.z = data.velocity.z;
-
-          player.velocity = velocity;
-        }
+        if (data.rot)
+          player.setRotation(data.rot);
         
-        if (data.rotation){
-          var rotation = new Vector2Schema();
-
-          rotation.x = data.rotation.x;
-          rotation.y = data.rotation.y;
-
-          player.rotation = rotation;
-        }
+        if (data.vel)
+          player.setVelocity(data.vel);
     }
 }
 
 export class StateHandlerRoom extends Room<State> {
-    allSpawnPoints: Vector3[] = [];
-    usedSpawnIndexes: Set<number> = new Set();
-    playersSpawns = new MapSchema<Vector3>();
-    maxClients = 2;
 
-    onCreate(options: any) {
+  maxClients = 2;
+  spawnPointsCount = 0;
+  skins: number[] = [];
 
-        for (const spawnPoint of options.spawnPoints) {
-          this.allSpawnPoints.push({ x: spawnPoint.x, y: spawnPoint.y, z: spawnPoint.z });
-        }
+  playerSpawnIndexes: Map<string, number> = new Map();
 
-        this.setState(new State());
+  mixArray(arr){
+    var currentIndex = arr.length;
+    var tempValue, randomIndex;
 
-        this.onMessage("move", (client, data) => {
+    while(currentIndex !== 0){
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      tempValue = arr[currentIndex];
+      arr[currentIndex] = arr[randomIndex];
+      arr[randomIndex] = tempValue;
+    }
+
+  }
+
+  onCreate(options: any) {
+
+      for (let index = 0; index < options.skins; index++) {
+        this.skins.push(index)
+      }
+
+      this.mixArray(this.skins);
+
+      this.spawnPointsCount = options.spawnsCount;
+      this.setState(new State());
+
+      this.onMessage("move", (client, data) => {
           this.state.movePlayer(client.sessionId, data);
-        });
-    
-        this.onMessage("shoot", (client, data) => {
+      });
+
+      this.onMessage("shoot", (client, data) => {
           this.broadcast("Shoot", data, { except: client });
-        });
+      });
 
-        this.onMessage("damage", (client, data) => {
-            const targetId = data.id;
-            const player = this.state.players.get(targetId);
-            if (!player) return;
+      this.onMessage("damage", (client, data) => {
+          const targetId = data.id;
+          const player = this.state.players.get(targetId);
+          if (!player) return;
 
-            let hp = player.currentHP - data.value;
+          let hp = player.currentHP - data.value;
 
-            if (hp > 0) {
-                player.currentHP = hp;
-                return;
-            }
+          if (hp > 0) {
+              player.currentHP = hp;
+              return;
+          }
 
-            player.loss += 1;
-            player.currentHP = player.maxHP;
-            
-            const spawn = this.playersSpawns.get(targetId);
-            const message = JSON.stringify(spawn);
+          player.loss += 1;
+          player.currentHP = player.maxHP;
 
-            for (const cln of this.clients) {
-                if (cln.sessionId === targetId) {
-                    cln.send("Respawn", message);
-                    break;
-                }
-            }
-        });
+          const newIndex = this.getFreeSpawnPoint();
+          this.playerSpawnIndexes.set(targetId, newIndex);
 
-        this.onMessage("weapon_switch", (client, data) => {
-            const player = this.state.players.get(client.sessionId);
-            player.wI = data.wI;
-          });
-      }
+          const clnt = this.clients.find(c => c.sessionId === targetId);
+          if (clnt)
+            clnt.send("Respawn", newIndex);
+      });
 
-    onAuth(client, options, req) {
-        return true;
-    }
+      this.onMessage("weapon_switch", (client, data) => {
+          const player = this.state.players.get(client.sessionId);
+          player.wI = data.wI;
+      });
+  }
 
-    onJoin(client: Client, data: any) {
-        this.spawnPlayer(client, data);
-      }
+  onAuth(client, options, req) {
+      return true;
+  }
 
-    onLeave(client: Client) {
-        const player = this.state.players.get(client.sessionId);
-        this.state.removePlayer(client.sessionId);
-    }
+  onJoin(client: Client, data: any) {
+      if (this.clients.length > 1) this.lock();
 
-    onDispose () {
-        console.log("Dispose StateHandlerRoom");
-    }
+      const skin = this.skins[this.clients.length - 1];
 
-    spawnPlayer(client: Client, data: any) {
-        const spawn = this.getFreeSpawnPoint();
+      this.playerSpawnIndexes.set(client.sessionId, data.spawn);
+      this.state.createPlayer(client.sessionId, data, skin);
+  }
 
-        this.playersSpawns.set(client.sessionId, spawn);
+  onLeave(client: Client) {
+      this.playerSpawnIndexes.delete(client.sessionId);
+      this.state.removePlayer(client.sessionId);
+  }
 
-        const player = new Player();
-        player.position.set(spawn);
-    
-        player.speed = data.speed ?? 5;
-        player.maxHP = data.hp ?? 100;
-        player.currentHP = player.maxHP;
-    
-        this.state.players.set(client.sessionId, player);
-    
-        if (this.clients.length >= 2) this.lock();
-    }
+  onDispose() {
+      console.log("Dispose StateHandlerRoom");
+  }
 
-    getFreeSpawnPoint(): Vector3 {
-        const free = this.allSpawnPoints.filter((_, i) => !this.usedSpawnIndexes.has(i));
-    
-        if (free.length === 0) {
-          return { x: 0, y: 0, z: 0 };
-        }
-    
-        const index = Math.floor(Math.random() * free.length);
-        const spawn = free[index];
-    
-        this.usedSpawnIndexes.add(index);
-        return spawn;
-    }
+  getFreeSpawnPoint(): number {
+    const taken = new Set(this.playerSpawnIndexes.values());
+    const allPoints = Array.from({ length: this.spawnPointsCount }, (_, i) => i);
+    const freePoints = allPoints.filter(p => !taken.has(p));
+    const available = freePoints.length > 0 ? freePoints : allPoints;
+    const randomIndex = Math.floor(Math.random() * available.length);
+
+    return available[randomIndex];
+  }
 }
