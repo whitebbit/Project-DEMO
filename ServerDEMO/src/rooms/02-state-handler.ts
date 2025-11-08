@@ -1,38 +1,49 @@
 import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
-import { log } from "console";
 
-interface Vector3 {
-    x: number;
-    y: number;
-    z: number;
-  }
+type Vector3 = { x: number; y: number; z: number };
+type Vector2 = { x: number; y: number };
+
+export class Vector3Schema extends Schema {
+    @type("number")
+    x = 0;
+
+    @type("number")
+    y = 0;
+
+    @type("number")
+    z = 0;
+
+    set(vector: Vector3) {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = vector.z;
+    }
+}
+
+export class Vector2Schema extends Schema {
+    @type("number")
+    x = 0;
+
+    @type("number")
+    y = 0;
+
+    set(vector: Vector2) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+}
 
 export class Player extends Schema {
     
-    @type("number")
-    pX = 0;
+    @type(Vector3Schema)
+    position = new Vector3Schema();
 
-    @type("number")
-    pY = 0;
+    @type(Vector3Schema)
+    velocity = new Vector3Schema();
 
-    @type("number")
-    pZ = 0;
-
-    @type("number")
-    vX = 0;
-
-    @type("number")
-    vY = 0;
-
-    @type("number")
-    vZ = 0;
-
-    @type("number")
-    rX = 0;
-
-    @type("number")
-    rY = 0;
+    @type(Vector2Schema)
+    rotation = new Vector2Schema();
 
     @type("number")
     speed = 0;
@@ -72,17 +83,35 @@ export class State extends Schema {
 
     movePlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
-
-        player.pX = data.pX;
-        player.pY = data.pY;
-        player.pZ = data.pZ;
         
-        player.vX = data.vX;
-        player.vY = data.vY;
-        player.vZ = data.vZ;
+        if (data.position){
+          var position = new Vector3Schema();
 
-        player.rX = data.rX;
-        player.rY = data.rY;
+          position.x = data.position.x;
+          position.y = data.position.y;
+          position.z = data.position.z;
+
+          player.position = position;
+        }
+        
+        if (data.velocity){
+          var velocity = new Vector3Schema();
+
+          velocity.x = data.velocity.x;
+          velocity.y = data.velocity.y;
+          velocity.z = data.velocity.z;
+
+          player.velocity = velocity;
+        }
+        
+        if (data.rotation){
+          var rotation = new Vector2Schema();
+
+          rotation.x = data.rotation.x;
+          rotation.y = data.rotation.y;
+
+          player.rotation = rotation;
+        }
     }
 }
 
@@ -124,11 +153,7 @@ export class StateHandlerRoom extends Room<State> {
             player.currentHP = player.maxHP;
             
             const spawn = this.playersSpawns.get(targetId);
-            const x = spawn.x;
-            const y = spawn.y;
-            const z = spawn.z;
-
-            const message = JSON.stringify({ x, y, z });
+            const message = JSON.stringify(spawn);
 
             for (const cln of this.clients) {
                 if (cln.sessionId === targetId) {
@@ -167,9 +192,7 @@ export class StateHandlerRoom extends Room<State> {
         this.playersSpawns.set(client.sessionId, spawn);
 
         const player = new Player();
-        player.pX = spawn.x;
-        player.pY = spawn.y;
-        player.pZ = spawn.z;
+        player.position.set(spawn);
     
         player.speed = data.speed ?? 5;
         player.maxHP = data.hp ?? 100;

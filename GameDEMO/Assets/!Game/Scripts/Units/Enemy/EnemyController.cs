@@ -70,35 +70,24 @@ namespace _Game.Scripts.Units.Enemy
             {
                 switch (change.Field)
                 {
-                    case "pX":
-                        position.x = (float)change.Value;
+                    case "position":
+                        var positionValue = (Vector3Schema)change.Value;
+                        position = positionValue.ToVector3();
                         break;
-                    case "pY":
-                        position.y = (float)change.Value;
+                    case "velocity":
+                        var velocityValue = (Vector3Schema)change.Value;
+                        velocity = velocityValue.ToVector3();
                         break;
-                    case "pZ":
-                        position.z = (float)change.Value;
-                        break;
-                    case "vX":
-                        velocity.x = (float)change.Value;
-                        break;
-                    case "vY":
-                        velocity.y = (float)change.Value;
-                        break;
-                    case "vZ":
-                        velocity.z = (float)change.Value;
-                        break;
-                    case "rX":
-                        look.SetRotateX((float)change.Value);
-                        break;
-                    case "rY":
-                        look.SetRotateY((float)change.Value);
+                    case "rotation":
+                        var rotationValue = (Vector2Schema)change.Value;
+                        var rotation = rotationValue.ToVector2();
+                        
+                        look.SetRotateX(rotation.x);
+                        look.SetRotateY(rotation.y);
                         break;
                     case "currentHP":
                         if ((sbyte)change.Value > (sbyte)change.PreviousValue)
-                        {
                             unit.UnitHealth.HealthPoints = Convert.ToSByte(change.Value);
-                        }
                         break;
                     case "loss":
                         MultiplayerManager.Instance.LossCounter.SetEnemyLoss((byte)change.Value);

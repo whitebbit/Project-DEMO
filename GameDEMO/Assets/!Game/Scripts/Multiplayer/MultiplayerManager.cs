@@ -70,23 +70,23 @@ namespace _Game.Scripts.Multiplayer
                 { "y", p.position.y },
                 { "z", p.position.z },
             }).ToList();
-            
+
             var data = new Dictionary<string, object>
             {
                 { "speed", playerPrefab.Config.Movement.Speed },
                 { "hp", playerPrefab.Config.Health.MaxHealth },
-                { "spawnPoints", spawnList}
+                { "spawnPoints", spawnList }
             };
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
             _room.OnStateChange += OnStateChange;
             _room.OnMessage<string>("Shoot", ApplyShoot);
         }
-        
+
         private void OnStateChange(State state, bool isFirstState)
         {
             if (!isFirstState) return;
-            
+
             state.players.ForEach((key, player) =>
             {
                 if (key == _room.SessionId) CreatePlayer(player);
@@ -99,8 +99,7 @@ namespace _Game.Scripts.Multiplayer
 
         private void CreatePlayer(Player player)
         {
-            var position = new Vector3(player.pX, player.pY, player.pZ);
-            var unit = Instantiate(playerPrefab, position, Quaternion.identity);
+            var unit = Instantiate(playerPrefab, player.position.ToVector3(), Quaternion.identity);
 
             unit.Initialize("", player);
             _room.OnMessage<string>("Respawn", unit.Respawn);
@@ -108,8 +107,7 @@ namespace _Game.Scripts.Multiplayer
 
         private void CreateEnemy(string key, Player player)
         {
-            var position = new Vector3(player.pX, player.pY, player.pZ);
-            var enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
+            var enemy = Instantiate(enemyPrefab, player.position.ToVector3(), Quaternion.identity);
 
             enemy.Initialize(key, player);
 
@@ -132,7 +130,7 @@ namespace _Game.Scripts.Multiplayer
 
             enemy.Controller.Shoot(info);
         }
-        
+
         #endregion
     }
 }

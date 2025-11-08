@@ -51,7 +51,7 @@ namespace _Game.Scripts.Units.Player
             _multiplayerManager.SendMessage("shoot", json);
         }
 
-        public void SendTransform(Vector3 customPosition = default,  Vector2 customRotation = default, Vector3 customVelocity = default)
+        public void SendTransform(Vector3 customPosition = default, Vector2 customRotation = default, Vector3 customVelocity = default)
         {
             movement.GetMoveInfo(out var position, out var velocity);
             cameraLook.GetRotateInfo(out var rotation);
@@ -59,17 +59,29 @@ namespace _Game.Scripts.Units.Player
             var pos = customPosition == default ? position : customPosition;
             var rot = customRotation == default ? rotation : customRotation;
             var vel = customVelocity == default ? velocity : customVelocity;
-            
+
             var data = new Dictionary<string, object>
             {
-                { "pX", pos.x },
-                { "pY", pos.y },
-                { "pZ", pos.z },
-                { "vX", vel.x },
-                { "vY", vel.y },
-                { "vZ", vel.z },
-                { "rX", rot.x },
-                { "rY", rot.y },
+                { "position", new Dictionary<string, float>
+                    {
+                        { "x", pos.x },
+                        { "y", pos.y },
+                        { "z", pos.z }
+                    }
+                },
+                { "velocity", new Dictionary<string, float>
+                    {
+                        { "x", vel.x },
+                        { "y", vel.y },
+                        { "z", vel.z }
+                    }
+                },
+                { "rotation", new Dictionary<string, float>
+                    {
+                        { "x", rot.x },
+                        { "y", rot.y }
+                    }
+                }
             };
 
             _multiplayerManager.SendMessage("move", data);
