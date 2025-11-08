@@ -64,17 +64,23 @@ namespace _Game.Scripts.Multiplayer
 
         private async void Connect()
         {
+            var spawnList = spawnPoints.Select(p => new Dictionary<string, float>
+            {
+                { "x", p.position.x },
+                { "y", p.position.y },
+                { "z", p.position.z },
+            }).ToList();
+            
             var data = new Dictionary<string, object>
             {
                 { "speed", playerPrefab.Config.Movement.Speed },
                 { "hp", playerPrefab.Config.Health.MaxHealth },
+                { "spawnPoints", spawnList}
             };
 
             _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
             _room.OnStateChange += OnStateChange;
             _room.OnMessage<string>("Shoot", ApplyShoot);
-            
-            InitializeSpawnPoints();
         }
         
         private void OnStateChange(State state, bool isFirstState)
@@ -125,18 +131,6 @@ namespace _Game.Scripts.Multiplayer
             if (!_enemies.TryGetValue(info.key, out var enemy)) return;
 
             enemy.Controller.Shoot(info);
-        }
-
-        private void InitializeSpawnPoints()
-        {
-            var spawnList = spawnPoints.Select(p => new Dictionary<string, float>
-            {
-                { "x", p.position.x },
-                { "y", p.position.y },
-                { "z", p.position.z },
-            }).ToList();
-
-            _room.Send("register_spawn_points", spawnList);
         }
         
         #endregion
