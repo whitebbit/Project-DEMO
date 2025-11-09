@@ -71,6 +71,8 @@ namespace _Game.Scripts.Units.Enemy
 
         private IEnumerator RespawnCoroutine()
         {
+            Health.HealthPoints = Health.MaxHealth;
+
             yield return null;
 
             Respawned = true;

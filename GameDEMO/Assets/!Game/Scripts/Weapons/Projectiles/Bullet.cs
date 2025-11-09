@@ -1,4 +1,5 @@
 ﻿using System;
+using _Game.Scripts.Units;
 using _Game.Scripts.Units.Interfaces;
 using UnityEngine;
 
@@ -22,9 +23,12 @@ namespace _Game.Scripts.Weapons.Projectiles
 
         private void OnCollisionEnter(Collision other)
         {
-            if (other.collider.TryGetComponent(out IDamageable damageable))
+            if (other.collider.TryGetComponent(out IHitVisitor damageable))
             {
-                damageable.ApplyDamage(_damage);
+                damageable.Visit(new DamageData
+                {
+                    Damage = _damage
+                });
             }
 
             Destroy(gameObject);

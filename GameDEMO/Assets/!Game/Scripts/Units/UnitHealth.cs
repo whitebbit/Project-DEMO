@@ -6,13 +6,14 @@ namespace _Game.Scripts.Units
     public class UnitHealth
     {
         public int MaxHealth { get; }
+
         public int HealthPoints
         {
             get => _currentHealth;
             set
             {
                 _currentHealth = Math.Clamp(value, 0, MaxHealth);
-
+                Debug.Log($"{_currentHealth} / {MaxHealth}");
                 OnHealthChanged?.Invoke(_currentHealth, MaxHealth);
                 if (_currentHealth <= 0)
                     OnDying?.Invoke();

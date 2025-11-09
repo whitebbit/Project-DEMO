@@ -43,8 +43,7 @@ namespace _Game.Scripts.Multiplayer
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            _room.Leave();
+            _room?.Leave();
         }
 
         #endregion

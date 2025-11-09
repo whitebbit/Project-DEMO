@@ -17,8 +17,8 @@ Library: D:\Yang\projects\Project DEMO\GameDEMO\Temp\BurstOutput\Data\Plugins\x8
 --assembly-defines=Unity.Burst;
 --assembly-defines=Boxophobic.Utils.Scripts;
 --assembly-defines=Unity.VisualScripting.Core;
---assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Boxophobic.PolyverseSkies.Runtime;
+--assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.Timeline;
@@ -82,8 +82,8 @@ Library: D:\Yang\projects\Project DEMO\GameDEMO\Temp\BurstOutput\Data\Plugins\x8
 --assembly-defines=Unity.Burst;
 --assembly-defines=Boxophobic.Utils.Scripts;
 --assembly-defines=Unity.VisualScripting.Core;
---assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Boxophobic.PolyverseSkies.Runtime;
+--assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.Timeline;
@@ -145,8 +145,8 @@ Library: D:\Yang\projects\Project DEMO\GameDEMO\Temp\BurstOutput\Data\Plugins\x8
 --assembly-defines=Unity.Burst;
 --assembly-defines=Boxophobic.Utils.Scripts;
 --assembly-defines=Unity.VisualScripting.Core;
---assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Boxophobic.PolyverseSkies.Runtime;
+--assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.Timeline;
@@ -214,8 +214,8 @@ Library: D:\Yang\projects\Project DEMO\GameDEMO\Temp\BurstOutput\Data\Plugins\x8
 --assembly-defines=Unity.Burst;
 --assembly-defines=Boxophobic.Utils.Scripts;
 --assembly-defines=Unity.VisualScripting.Core;
---assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Boxophobic.PolyverseSkies.Runtime;
+--assembly-defines=Unity.RenderPipelines.Universal.Config.Runtime;
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.Timeline;
